@@ -1,0 +1,51 @@
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
+  tomcat:
+    threads:
+      max: 40
+    max-parameter-count: 30
+spring:
+  jackson:
+    deserialization:
+      accept-float-as-int: false
+  application:
+    name: zero-table-api
+  datasource:
+    url: jdbc:sqlite:${SQLITE_PATH:./data/zero-table.db}
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
+      connection-init-sql: PRAGMA busy_timeout=10000
+  sql:
+    init:
+      mode: always
+  lifecycle:
+    timeout-per-shutdown-phase: 25s
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    operations-sorter: alpha
+app:
+  api-config: ${API_CONFIG_PATH:./config/zero_table_api_config.json}
+  collection-plan: ${COLLECTION_PLAN_PATH:./config/collection-plan.json}
+  schedule-enabled: ${COLLECTION_SCHEDULE_ENABLED:false}
+  collection-cron: ${COLLECTION_CRON:0 30 3 * * *}
+  upstream:
+    seoul: ${SEOUL_BASE_URL:http://openapi.seoul.go.kr:8088}
+    stores: ${STORES_BASE_URL:https://apis.data.go.kr/B553077/api/open/sdsc2}
+    reb: ${REB_BASE_URL:https://www.reb.or.kr/r-one/openapi}

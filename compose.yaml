@@ -1,0 +1,12 @@
+services:
+  api:
+    build: .
+    user: "${LOCAL_UID:?Use scripts/run-container.sh}:${LOCAL_GID:?Use scripts/run-container.sh}"
+    ports: ["8080:8080"]
+    environment:
+      SQLITE_PATH: /data/zero-table.db
+      API_CONFIG_PATH: /run/keys/api-config.json
+    volumes:
+      - ./data:/data
+      - ./.local/api-config.json:/run/keys/api-config.json:ro
+    restart: unless-stopped

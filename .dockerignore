@@ -1,0 +1,4 @@
+*
+!target/zero-table-api.jar
+!config/collection-plan.json
+!config/bootstrap-plan.json

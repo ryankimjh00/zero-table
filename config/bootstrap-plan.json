@@ -1,0 +1,71 @@
+[
+  {
+    "dataset": "seoul_commercial_districts",
+    "params": {},
+    "pageSize": 1000,
+    "maxPages": 10
+  },
+  {
+    "dataset": "seoul_estimated_sales",
+    "params": {
+      "quarter": "latest"
+    },
+    "pageSize": 1000,
+    "maxPages": 100
+  },
+  {
+    "dataset": "seoul_pedestrian_population",
+    "params": {
+      "quarter": "latest"
+    },
+    "pageSize": 1000,
+    "maxPages": 10
+  },
+  {
+    "dataset": "seoul_stores",
+    "params": {
+      "quarter": "latest"
+    },
+    "pageSize": 1000,
+    "maxPages": 200
+  },
+  {
+    "dataset": "seoul_resident_population",
+    "params": {},
+    "pageSize": 1000,
+    "maxPages": 100
+  },
+  {
+    "dataset": "small_business_stores",
+    "params": {
+      "divId": "ctprvnCd",
+      "key": "11"
+    },
+    "pageSize": 1000,
+    "maxPages": 3
+  },
+  {
+    "dataset": "reb_tables",
+    "params": {},
+    "pageSize": 1000,
+    "maxPages": 10
+  },
+  {
+    "dataset": "reb_table_items",
+    "params": {
+      "STATBL_ID": "A_2024_00900"
+    },
+    "pageSize": 1000,
+    "maxPages": 10
+  },
+  {
+    "dataset": "reb_real_estate_statistics",
+    "params": {
+      "STATBL_ID": "A_2024_00900",
+      "DTACYCLE_CD": "YY",
+      "WRTTIME_IDTFR_ID": "2025"
+    },
+    "pageSize": 1000,
+    "maxPages": 10
+  }
+]
