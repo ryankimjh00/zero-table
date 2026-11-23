@@ -17,10 +17,10 @@ config/*secret*
 config/zero_table_api_config.json
 /outputs/
 /_workspace/
-/deploy/
-/docs/OPERATIONS.md
-/docs/*-verification.json
-/scripts/backup-production.sh
-/scripts/collect-production.sh
-/scripts/deploy-manual.sh
-/scripts/registry-auth.py
+/backend/deploy/
+/backend/docs/OPERATIONS.md
+/backend/docs/*-verification.json
+/backend/scripts/backup-production.sh
+/backend/scripts/collect-production.sh
+/backend/scripts/deploy-manual.sh
+/backend/scripts/registry-auth.py
