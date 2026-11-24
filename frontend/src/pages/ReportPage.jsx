@@ -3,7 +3,6 @@ import { Link, Navigate } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
 import SummaryBar from '../components/SummaryBar.jsx'
 import FlowStepper from '../components/FlowStepper.jsx'
-import MapSketch from '../components/MapSketch.jsx'
 import { ZONES } from '../constants/flow.js'
 import { DummyBadge, RealBadge } from '../components/Badges.jsx'
 import { QUESTION_STEPS } from '../constants/questions.js'
@@ -99,14 +98,6 @@ export default function ReportPage() {
       <section id="location" className="report-section">
         <p className="eyebrow">01 / 입지 비교 <DummyBadge /></p>
         <h2 className="section-title">같은 동네에서도, 자리는 다르게 작동해요</h2>
-        <div className="map-layout">
-          <MapSketch placeName={base.district?.name} />
-          <aside className="map-panel">
-            <span className="pill green">우선 답사 추천</span>
-            <h3>큰길 안쪽 직장인 동선 주변</h3>
-            <p className="muted small">대로변 노출보다 포장 접근성과 임대 조건의 균형을 먼저 비교해보세요.</p>
-          </aside>
-        </div>
         <table className="data-table">
           <thead><tr><th>후보 지역</th><th>예시 적합도</th><th>수요</th><th>경쟁</th><th>비용</th></tr></thead>
           <tbody>
@@ -226,7 +217,7 @@ export default function ReportPage() {
 
       <section className="report-section notice-box">
         <h3>이 보고서를 읽기 전에 기억하세요</h3>
-        <p className="small">서울시 상권 공공데이터를 바탕으로 한 참고 자료예요. 사업 성공이나 수익을 보장하지 않아요. 지도·가격·비용 배분은 예시입니다.</p>
+        <p className="small">서울시 상권 공공데이터를 바탕으로 한 참고 자료예요. 사업 성공이나 수익을 보장하지 않아요. 후보 지역 점수·가격·비용 배분은 예시입니다.</p>
       </section>
 
       <div className="row-between wrap">
