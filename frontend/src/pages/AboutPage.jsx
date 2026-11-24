@@ -17,7 +17,7 @@ export default function AboutPage() {
         <h3>더미인 것</h3>
         <ul className="plain-list">
           <li>로그인, 아이디어 저장, 광고 크레딧, 보고서 다운로드</li>
-          <li>추천 동네, 지도, 가격 비교, 자본 배분</li>
+          <li>입지 비교 점수, 가격 비교, 자본 배분</li>
         </ul>
       </div>
       <Link className="btn primary" to="/">분석 시작하기</Link>

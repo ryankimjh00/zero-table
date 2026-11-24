@@ -2,10 +2,8 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout.jsx'
 import StartPage from './pages/StartPage.jsx'
 import BasicInputPage from './pages/BasicInputPage.jsx'
-import RegionPage from './pages/RegionPage.jsx'
 import AnalyzingPage from './pages/AnalyzingPage.jsx'
 import SimpleResultPage from './pages/SimpleResultPage.jsx'
-import MapComparePage from './pages/MapComparePage.jsx'
 import QuestionsPage from './pages/QuestionsPage.jsx'
 import ResultOpenPage from './pages/ResultOpenPage.jsx'
 import ReportPage from './pages/ReportPage.jsx'
@@ -18,10 +16,8 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<StartPage />} />
         <Route path="/input" element={<BasicInputPage />} />
-        <Route path="/region" element={<RegionPage />} />
         <Route path="/analyzing" element={<AnalyzingPage />} />
         <Route path="/result" element={<SimpleResultPage />} />
-        <Route path="/map" element={<MapComparePage />} />
         <Route path="/questions/:step" element={<QuestionsPage />} />
         <Route path="/open" element={<ResultOpenPage />} />
         <Route path="/report" element={<ReportPage />} />
