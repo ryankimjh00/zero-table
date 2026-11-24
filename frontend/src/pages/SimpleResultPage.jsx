@@ -2,22 +2,15 @@ import { Link, Navigate } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
 import SummaryBar from '../components/SummaryBar.jsx'
 import FlowStepper from '../components/FlowStepper.jsx'
-import { RealBadge, TempBadge } from '../components/Badges.jsx'
-import { count, won } from '../format.js'
-
-// 시안 예시 점수. 운영 서버(v1)가 기본 정보만으로는 점수를 주지 않아서 임시로 쓴다.
-const EXAMPLE_SCORE = 74
+import { RealBadge } from '../components/Badges.jsx'
+import { assessmentScore, count, won } from '../format.js'
 
 export default function SimpleResultPage() {
   const { base, simpleResult } = useAnswers()
   if (!simpleResult) return <Navigate to="/input?mode=simple" replace />
 
   const { assessment, facts } = simpleResult
-  // 서버가 기본 정보만으로 점수를 계산해 주면(v2) 100점 기준으로 환산하고, 아니면 예시 점수를 쓴다.
-  const hasServerScore = assessment.availablePoints > 0
-  const score = hasServerScore
-    ? Math.round((assessment.earnedScore / assessment.availablePoints) * 100)
-    : EXAMPLE_SCORE
+  const score = assessmentScore(assessment)
 
   const cards = [
     {
@@ -50,14 +43,15 @@ export default function SimpleResultPage() {
         <section className="score-card">
           <div className="row-between">
             <h2>입지 적합도</h2>
-            {hasServerScore ? <RealBadge /> : <TempBadge />}
+            {score !== null && <RealBadge />}
           </div>
-          <p className="score-big">{score}<span> 점 / 100</span></p>
-          <div className="bar"><span style={{ width: `${score}%` }} /></div>
+          {score === null
+            ? <p>산정 보류</p>
+            : <><p className="score-big">{score}<span> / 100점</span></p>
+              <div className="bar"><span style={{ width: `${score}%` }} /></div></>}
           <p className="muted small">
-            {hasServerScore
-              ? `서버가 계산한 ${assessment.earnedScore}/${assessment.availablePoints}점을 100점 기준으로 환산했어요.`
-              : `운영 서버(${assessment.ruleVersion})는 기본 정보만으로는 점수를 계산하지 않아서(0/0점) 시안 예시 점수를 임시로 보여 줘요.`}
+            {score === null ? '이 상권에서 계산에 사용할 수 있는 자료가 부족해요.'
+              : `평가 가능한 항목을 100점으로 환산했어요. 평가 배점 ${assessment.coveragePercent}%`}
           </p>
         </section>
 

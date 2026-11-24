@@ -6,7 +6,7 @@ import FlowStepper from '../components/FlowStepper.jsx'
 import { ZONES } from '../constants/flow.js'
 import { DummyBadge, RealBadge } from '../components/Badges.jsx'
 import { QUESTION_STEPS } from '../constants/questions.js'
-import { count, won } from '../format.js'
+import { assessmentScore, count, won } from '../format.js'
 
 // 보류 사유 코드 → 화면 문구
 const STATUS_LABEL = {
@@ -36,6 +36,7 @@ export default function ReportPage() {
   if (!detailResult) return <Navigate to="/questions/1" replace />
 
   const { assessment, facts } = detailResult
+  const score = assessmentScore(assessment)
   const target = detailResult.requestBody.demand.targetMonthlySales
   const price = detailResult.requestBody.strategy.menuPrice
   const monthlyOrders = target && price ? target / price : null
@@ -72,17 +73,15 @@ export default function ReportPage() {
           <p className="muted small">{labelOf('experience', answers.experience)} · {labelOf('participation', answers.participation)}</p></div>
       </div>
 
-      {/* 점수: 서버가 계산한 부분 점수를 그대로 보여 준다. totalScore는 전체 평가 전까지 null이다. */}
       <section className="score-banner">
         <div>
-          <p className="small">계산된 항목 점수 <RealBadge /></p>
-          <p className="score-big">{assessment.earnedScore}<span> / {assessment.availablePoints}점</span></p>
+          <p className="small">종합 점수 <RealBadge /></p>
+          {score === null ? <h2>산정 보류</h2> : <p className="score-big">{score}<span> / 100점</span></p>}
         </div>
         <div>
-          <h2>종합 점수는 {assessment.totalScore === null ? '보류' : `${assessment.totalScore}점`}예요.</h2>
+          <h2>평가 배점 {assessment.coveragePercent}%</h2>
           <p className="small">
-            전체 100점 중 {assessment.coveragePercent}%만 계산할 수 있어요(규칙 {assessment.ruleVersion}).
-            나머지는 답변이 미정이거나 서버에 비교 자료가 없어 보류됐어요.
+            평가 가능한 항목의 결과를 100점으로 환산해요. 규칙 {assessment.ruleVersion}
           </p>
         </div>
       </section>
@@ -187,7 +186,7 @@ export default function ReportPage() {
           <div key={c.id} className="panel">
             <div className="row-between">
               <h3>{c.name}</h3>
-              <strong>{c.score === null ? '보류' : `${c.score} / ${c.availablePoints}점`} <span className="muted small">(배점 {c.maxScore})</span></strong>
+              <strong>{c.score === null ? '보류' : `획득 ${c.score}점`} <span className="muted small">· 배점 {c.maxScore}점</span></strong>
             </div>
             <ul className="criteria-list">
               {c.criteria.map((item) => (
@@ -195,7 +194,7 @@ export default function ReportPage() {
                   <span>{item.name}</span>
                   <span className={`status ${item.status}`}>{STATUS_LABEL[item.status] ?? item.status}</span>
                   <span className="criteria-value">
-                    {item.score === null ? item.reason : `${item.score} / ${item.maxScore}점`}
+                    {item.score === null ? item.reason : `획득 ${item.score}점 · 배점 ${item.maxScore}점`}
                   </span>
                 </li>
               ))}

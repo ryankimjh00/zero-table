@@ -1,13 +1,13 @@
 # 창업 설문 점수 계산
 
-`POST /api/v1/assessments`로 평가하고 `GET /api/v1/assessments/rules`로 세부 배점을 조회합니다. 개정 초안은 `2026-11-20-v2`입니다. 전체 100점 중 최대 56점분을 계산합니다.
+`POST /api/v1/assessments`로 평가하고 `GET /api/v1/assessments/rules`로 세부 배점을 조회합니다. 현재 규칙은 `2026-11-24-v3`입니다. 직장인·지역 주민은 전체 배점 100점 중 최대 61점분을 평가합니다.
 
 ## 100점 배점
 
 | 영역 | 항목 | 배점 | 자료 및 초안 산식 |
 | --- | --- | ---: | --- |
 | 목표 고객 적합도 | 연령대 | 10 | 선택 연령 매출 ÷ 매출이 가장 큰 연령군 × 10 |
-| | 고객 유형 | 5 | 보류. 상주인구는 거주 배경 참고값이며 직장인·학생·관광객별 구매 자료가 필요 |
+| | 고객 유형 | 5 | 동일 분기·상권 유형의 인구 밀도 백분위 × 5. 직장인은 직장인구, 지역 주민은 상주인구를 사용. 학생·관광객은 보류 |
 | | 이용 상황 | 5 | 보류. 유동인구는 통행 규모 참고값이며 방문 목적별 구매 자료가 필요 |
 | 판매 시간 적합도 | 영업 요일 | 10 | 계획 요일군 일평균 매출 ÷ 일평균이 가장 높은 요일군 × 10. 평일·주말 모두 영업은 유효한 매출 자료가 있으면 10점 |
 | | 판매 시간대 | 10 | 선택 시간대 시간당 매출 ÷ 시간당 매출이 가장 높은 시간대 × 10 |
@@ -21,7 +21,8 @@
 | 운영 준비도 | 근무·운영 경험 | 5 | 보류. 관련 경험과 교육·동업 등 보완 계획의 반영 기준 협의 필요 |
 | | 직접 운영 참여 | 5 | 보류. 실제 영업 일정과 대체 인력의 반영 기준 협의 필요 |
 
-- **백분위:** `(대상보다 값이 낮은 비교 상권 수 + 같은 값의 상권 수 × 0.5) ÷ 유효 비교 상권 수`. 대상 상권을 제외한 최소 5곳을 사용합니다. 매출·점포는 업종도 동일해야 합니다. 인구는 각 자료의 유효 비교 상권을 따로 사용하고 두 지표를 각각 5점으로 계산합니다. 응답의 백분위는 0~100, 산식의 백분위는 0~1입니다.
+- **백분위:** `(대상보다 값이 낮은 비교 상권 수 + 같은 값의 상권 수 × 0.5) ÷ 유효 비교 상권 수`. 대상 상권을 제외한 최소 5곳을 사용합니다. 매출·점포는 업종도 동일해야 합니다. 잠재 수요는 유동인구·상주인구 비교군을 따로 사용하고 두 지표를 각각 5점으로 계산합니다. 응답의 백분위는 0~100, 산식의 백분위는 0~1입니다.
+- **고객 유형:** 인구 수를 상권영역의 면적으로 나눠 ㎢당 인구를 계산합니다. 같은 분기에서 인구 자료와 상권영역의 유형 코드가 일치하는 상권끼리 비교합니다. 면적이 0이거나 유효 비교 상권이 5곳 미만이면 평가를 보류합니다.
 - **기간과 단위:** 평일·주말 일수는 실제 분기 달력 기준입니다. 시간대는 오전 06~11, 점심 11~14, 오후 14~17, 저녁 17~21, 심야 21~06시입니다. 심야는 21~24시와 00~06시를 합칩니다. 연령 50대 이상은 50대와 60대 이상을 합칩니다.
 - **월매출 계획:** `monthlySalesPerStore = 분기 업종 추정매출 ÷ 3 ÷ 전체 점포 수`를 목표 월매출과 화면에서 함께 볼 수 있습니다. 점포 수에는 프랜차이즈와 분기 중 일부 폐업 점포가 포함될 수 있습니다. `targetDailySales = 목표 월매출 ÷ 월 영업일 수`, `targetSalesPerTeam = 목표 일매출 ÷ 하루 예상 방문 팀 수`도 표시할 수 있습니다. 이 지표들은 업종 수요 점수에 반영하지 않습니다.
 - **수용 계획:** 한 팀이 테이블 하나를 쓴다는 가정입니다. 5개 테이블을 하루 3회씩 쓰고 18팀이 올 계획이면 15팀분으로 계산해 5/6점입니다. 면적·좌석 수는 입력으로 받으며 실제 배치와 피크 시간 수용량은 별도 확인이 필요합니다.
@@ -31,19 +32,23 @@
 
 운영 API에서 2026년 2분기 GS강동자이아파트 상권(`3111083`)의 커피·음료업(`CS100010`)을 조회했습니다. 연령·요일·시간대별 매출 필드와 업종 추정매출 429,535,686원, 동종 전체 점포 4곳, 유동인구 집계값 1,127,312, 상주인구 3,031명을 확인했습니다.
 
-아래 요청 예시를 실제 자료 사본에 적용하면 **31.49/56점**입니다. 저녁 시간대는 2.89/10점이고 `suggestions`의 대안은 10점인 점심입니다.
+아래 요청 예시에서 더 높은 점수가 나오는 시간대는 `suggestions`에서 확인합니다. 기존 평가 56점분에 고객 유형 배점 5점이 추가됩니다.
 
 | 운영 데이터셋 | 사용하는 필드 |
 | --- | --- |
 | `seoul_estimated_sales` | `THSMON_SELNG_AMT`, `AGRDE_*`, `MDWK_SELNG_AMT`, `WKEND_SELNG_AMT`, `TMZON_*` |
 | `seoul_pedestrian_population` | `TOT_FLPOP_CO` |
 | `seoul_resident_population` | `TOT_REPOP_CO` |
+| `seoul_workplace_population` | `TOT_WRC_POPLTN_CO` |
+| `seoul_commercial_districts` | `RELM_AR` |
 | `seoul_stores` | `SIMILR_INDUTY_STOR_CO` |
 | 공통 | 비교군 구분에 `TRDAR_SE_CD` 사용 |
 
 - [서울시 추정매출](https://data.seoul.go.kr/dataList/OA-15572/S/1/datasetView.do)
 - [서울시 길단위인구](https://data.seoul.go.kr/dataList/OA-15568/S/1/datasetView.do)
 - [서울시 상주인구](https://data.seoul.go.kr/dataList/OA-15584/S/1/datasetView.do)
+- [서울시 직장인구](https://data.seoul.go.kr/dataList/OA-15569/A/1/datasetView.do)
+- [서울시 상권영역](https://data.seoul.go.kr/dataList/OA-15560/S/1/datasetView.do)
 - [서울시 점포](https://data.seoul.go.kr/dataList/OA-15577/S/1/datasetView.do?tab=A)
 
 ## 요청과 응답
@@ -83,7 +88,7 @@
 | `readiness.experience` | `NONE` 경험 없음 / `EMPLOYEE` 직원 / `MANAGER` 관리 / `OWNER` 운영 |
 | `readiness.participation` | `FULL_TIME` 전업 / `THREE_FOUR_DAYS` 주 3~4일 / `WEEKENDS` 주말 |
 
-- `earnedScore / availablePoints`를 계산된 항목의 점수로 표시합니다. `coveragePercent`는 전체 100점 중 계산한 배점 비율입니다. 100점을 모두 평가할 때 `totalScore`를 반환합니다.
+- 종합 화면에는 `scoreOutOf100 = 100 × earnedScore ÷ availablePoints`와 `coveragePercent`를 함께 표시합니다. 예를 들어 획득 36.60점, 평가 배점 61점이면 **60/100점 · 평가 배점 61%**입니다. 평가 배점이 0이면 환산 점수가 `null`입니다. 모든 항목이 평가되면 `totalScore`도 반환합니다.
 - 항목의 `score`가 `null`이면 보류 사유를 표시합니다. `MISSING_ANSWER`는 미정, `MISSING_DATA`는 유효한 비교 자료 부족, `UNSUPPORTED_DATA`는 비교에 필요한 자료 미제공, `PENDING_RULE`은 기준 협의가 필요한 항목입니다.
 - `criteria[].evidence`는 계산 및 비교 근거, `indicators`는 참고값, `sources`는 조회에 사용한 데이터셋과 대상 자료 수집 시각입니다.
 - 이전 응답의 `monthly-target`은 `industry-sales`와 `potential-demand`로 교체했습니다. `store-size`, `table-count`, `table-turns`는 `capacity`로 통합했습니다. 화면은 `ruleVersion`을 함께 보관해 이전 점수와 구분하세요.

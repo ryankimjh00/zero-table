@@ -60,6 +60,7 @@ class AssessmentIntegrationTest {
         assertThat(result.path("earnedScore").asDouble()).isEqualTo(34);
         assertThat(result.path("availablePoints").asInt()).isEqualTo(56);
         assertThat(result.path("coveragePercent").asDouble()).isEqualTo(56);
+        assertThat(result.path("scoreOutOf100").asDouble()).isEqualTo(60.71);
         assertThat(result.path("totalScore").isNull()).isTrue();
         assertThat(result.path("status").asText()).isEqualTo("PARTIAL");
         assertThat(criterion(result,"customer-age").path("score").asDouble()).isEqualTo(5);
@@ -76,6 +77,40 @@ class AssessmentIntegrationTest {
         assertThat(result.path("indicators").path("targetDailySales").asDouble()).isEqualTo(833333.33);
         assertThat(result.path("indicators").path("targetSalesPerTeam").asDouble()).isEqualTo(46296.3);
         assertThat(result.path("sources").get(0).path("collectedAt").asText()).isEqualTo("2026-10-31T07:00:00Z");
+    }
+
+    @Test
+    void comparesWorkerAndResidentDensitiesWithinTheSameDistrictTypeAndQuarter() throws Exception {
+        seed();
+        insert("seoul_workplace_population","20262","3111083",null,metric("TOT_WRC_POPLTN_CO",1000));
+        insert("seoul_commercial_districts",null,"3111083",null,metric("RELM_AR",10000));
+        int district=3111090;
+        for(int[] peer:new int[][]{{400,5000},{600,5000},{800,10000},{1200,15000},{1400,14000}}) {
+            String code=Integer.toString(district++);
+            insert("seoul_workplace_population","20262",code,null,metric("TOT_WRC_POPLTN_CO",peer[0]));
+            insert("seoul_commercial_districts",null,code,null,metric("RELM_AR",peer[1]));
+        }
+        insert("seoul_workplace_population","20261","3111110",null,metric("TOT_WRC_POPLTN_CO",5000));
+        insert("seoul_workplace_population","20262","3111110",null,metric("TOT_WRC_POPLTN_CO",6000).put("TRDAR_SE_CD","D"));
+        insert("seoul_commercial_districts",null,"3111110",null,metric("RELM_AR",10000).put("TRDAR_SE_CD","D"));
+
+        var request=request();
+        var result=assess(request);
+        var criterion=criterion(result,"customer-type");
+        assertThat(criterion.path("score").asDouble()).isEqualTo(3.5);
+        assertThat(criterion.path("evidence").path("populationPeerCount").asInt()).isEqualTo(5);
+        assertThat(result.path("availablePoints").asInt()).isEqualTo(61);
+        assertThat(result.path("scoreOutOf100").asDouble()).isEqualTo(61.48);
+
+        var customer=(ObjectNode)request.path("customer");
+        customer.put("type","RESIDENT");
+        assertThat(criterion(assess(request),"customer-type").path("score").asDouble()).isEqualTo(2);
+        customer.put("type","STUDENT");
+        assertThat(criterion(assess(request),"customer-type").path("status").asText()).isEqualTo("UNSUPPORTED_DATA");
+
+        customer.put("type","WORKER");
+        replace("seoul_commercial_districts",metric("RELM_AR",0));
+        assertThat(criterion(assess(request),"customer-type").path("status").asText()).isEqualTo("MISSING_DATA");
     }
 
     @Test
@@ -193,6 +228,7 @@ class AssessmentIntegrationTest {
         var result=assess(request);
         assertThat(result.path("availablePoints").asInt()).isZero();
         assertThat(result.path("earnedScore").asDouble()).isZero();
+        assertThat(result.path("scoreOutOf100").isNull()).isTrue();
         assertThat(result.path("totalScore").isNull()).isTrue();
         request.set("demand",json.readTree("{\"targetMonthlySales\":null}"));
         assertThat(criterion(assess(request),"capacity").path("status").asText()).isEqualTo("MISSING_ANSWER");
@@ -221,14 +257,14 @@ class AssessmentIntegrationTest {
     @Test
     void exposesRulesSwaggerAndPostCors() throws Exception {
         mvc.perform(get("/api/v1/assessments/rules")).andExpect(status().isOk())
-            .andExpect(jsonPath("$.maxScore").value(100)).andExpect(jsonPath("$.currentlySupportedPoints").value(56));
+            .andExpect(jsonPath("$.maxScore").value(100)).andExpect(jsonPath("$.currentlySupportedPoints").value(61));
         mvc.perform(options("/api/v1/assessments").header("Origin","https://frontend.example")
             .header("Access-Control-Request-Method","POST").header("Access-Control-Request-Headers","content-type"))
             .andExpect(status().isOk()).andExpect(header().string("Access-Control-Allow-Origin","*"));
         mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
             .andExpect(jsonPath("$.paths['/api/v1/assessments'].post.requestBody.content['application/json'].example").exists())
             .andExpect(jsonPath("$.components.schemas.AssessmentRequest.properties.strategy").exists())
-            .andExpect(jsonPath("$.components.schemas.AssessmentResult.properties.availablePoints").exists());
+            .andExpect(jsonPath("$.components.schemas.AssessmentResult.properties.scoreOutOf100").exists());
     }
 
     ObjectNode request() throws Exception {

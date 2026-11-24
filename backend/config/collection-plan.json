@@ -36,6 +36,12 @@
     "maxPages": 100
   },
   {
+    "dataset": "seoul_workplace_population",
+    "params": {},
+    "pageSize": 1000,
+    "maxPages": 100
+  },
+  {
     "dataset": "small_business_stores",
     "params": {
       "divId": "ctprvnCd",

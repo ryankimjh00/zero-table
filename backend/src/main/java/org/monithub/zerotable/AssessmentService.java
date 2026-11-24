@@ -15,12 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AssessmentService {
-    private static final String VERSION="2026-11-20-v2";
+    private static final String VERSION="2026-11-24-v3";
     private static final String SALES="seoul_estimated_sales", STORES="seoul_stores";
     private static final String PEDESTRIANS="seoul_pedestrian_population", RESIDENTS="seoul_resident_population";
+    private static final String WORKERS="seoul_workplace_population", DISTRICTS="seoul_commercial_districts";
     private static final int MIN_PEERS=5;
     private static final List<Rule> RULES=List.of(
-        new Rule("customer","customer-type","목표 고객 유형과 상권 특성",5,false,"상주인구는 거주 배경만 설명하며 고객 유형별 구매는 별도 자료가 필요합니다."),
+        new Rule("customer","customer-type","목표 고객 유형과 상권 특성",5,true,"5 × 같은 분기·상권 유형의 인구 밀도 백분위(0~1). 직장인은 직장인구, 지역 주민은 상주인구를 사용합니다."),
         new Rule("customer","customer-age","주요 고객 연령",10,true,"10 × 선택 연령 매출 / 가장 큰 연령군 매출 (50대 이상은 합산)"),
         new Rule("customer","customer-purpose","고객 방문 목적",5,false,"방문 목적별 구매 자료가 없어 판단 보류"),
         new Rule("schedule","business-days","영업 요일",10,true,"10 × 선택 요일군의 일평균 매출 / 높은 요일군의 일평균 매출; 모두 영업은 10점"),
@@ -42,7 +43,7 @@ public class AssessmentService {
 
     public RuleSet rules() {
         int supported=RULES.stream().filter(Rule::supported).mapToInt(Rule::maxScore).sum();
-        return new RuleSet(VERSION,100,supported,"모든 항목 평가 전 totalScore=null. 미정·자료 부족·기준 협의 중인 항목은 평가 가능 배점에서 제외합니다.",RULES);
+        return new RuleSet(VERSION,100,supported,"scoreOutOf100은 계산된 점수를 평가 가능 배점으로 나눠 100점으로 환산합니다. 평가 가능 배점이 0이면 null입니다. totalScore는 전체 평가 후에 제공합니다.",RULES);
     }
 
     @Transactional(readOnly=true)
@@ -51,11 +52,16 @@ public class AssessmentService {
         var storeRows=store.assessmentRows(STORES,request.quarter(),request.districtCode(),request.industryCode());
         var pedestrianRows=store.assessmentRows(PEDESTRIANS,request.quarter(),request.districtCode(),null);
         var residentRows=store.assessmentRows(RESIDENTS,request.quarter(),request.districtCode(),null);
+        var type=request.customer()==null?null:request.customer().type();
+        var workerRows=type==CustomerType.WORKER?store.assessmentRows(WORKERS,request.quarter(),request.districtCode(),null):List.<RecordStore.AssessmentRow>of();
+        boolean usesArea=type==CustomerType.WORKER||type==CustomerType.RESIDENT;
+        var districtRows=usesArea?store.assessmentRows(DISTRICTS,null,request.districtCode(),null):List.<RecordStore.AssessmentRow>of();
         JsonNode sales=single(salesRows), stores=single(storeRows), pedestrians=single(pedestrianRows), residents=single(residentRows);
         var criteria=new LinkedHashMap<String,Criterion>();
         for(var rule:RULES) criteria.put(rule.id(),pending(rule,rule.supported()?"MISSING_ANSWER":"UNSUPPORTED_DATA",
             rule.supported()?"답변이 미정입니다.":rule.formula()));
 
+        scoreCustomerType(request,type,single(workerRows),residents,single(districtRows),criteria);
         scoreAge(request, sales, criteria);
         scoreDays(request, sales, criteria);
         var suggestions=scoreTime(request, sales, criteria);
@@ -76,13 +82,55 @@ public class AssessmentService {
         }
         int available=categories.stream().mapToInt(Category::availablePoints).sum();
         double earned=round(criteria.values().stream().filter(c->c.score()!=null).mapToDouble(Criterion::score).sum());
+        var sources=new ArrayList<>(List.of(source(SALES,salesRows),source(STORES,storeRows),source(PEDESTRIANS,pedestrianRows),source(RESIDENTS,residentRows)));
+        if(type==CustomerType.WORKER) sources.add(source(WORKERS,workerRows));
+        if(usesArea) sources.add(source(DISTRICTS,districtRows));
         return new Result(VERSION,available==100?"COMPLETE":"PARTIAL",available==100?earned:null,
+            available==0?null:round(100*earned/available),
             earned,available,100,available,categories,indicators(request,sales,stores,pedestrians,residents),
-            List.of(source(SALES,salesRows),source(STORES,storeRows),source(PEDESTRIANS,pedestrianRows),source(RESIDENTS,residentRows)),
+            sources,
             suggestions,List.of(
                 "점포당 월매출 참고값은 분기 추정매출을 3개월과 전체 점포 수로 나눠 계산합니다.",
                 "수용 계획은 한 팀이 테이블 하나를 사용하는 가정으로 계산합니다. 실제 배치와 피크 시간 수용량은 별도 확인이 필요합니다.",
                 "요일별 매출과 시간대별 매출은 각각의 집계입니다."));
+    }
+
+    private void scoreCustomerType(Request r,CustomerType type,JsonNode workers,JsonNode residents,JsonNode district,Map<String,Criterion> result) {
+        String id="customer-type";
+        if(undecided(type)) return;
+        if(type==CustomerType.STUDENT||type==CustomerType.TOURIST) {
+            result.put(id,pending(rule(id),"UNSUPPORTED_DATA","학생·관광객에 적용할 검증된 상권 비교 자료가 필요합니다."));
+            return;
+        }
+        boolean worker=type==CustomerType.WORKER;
+        String dataset=worker?WORKERS:RESIDENTS;
+        String field=worker?"TOT_WRC_POPLTN_CO":"TOT_REPOP_CO";
+        JsonNode target=worker?workers:residents;
+        Double population=number(target,field),area=number(district,"RELM_AR");
+        Double targetDensity=density(population,area);
+        String districtType=target==null?"":target.path("TRDAR_SE_CD").asText("");
+        if(targetDensity==null||districtType.isBlank()||!districtType.equals(district.path("TRDAR_SE_CD").asText())) {
+            missingCustomerDensity(result);
+            return;
+        }
+        var peers=store.assessmentPopulationAreas(dataset,DISTRICTS,r.quarter(),r.districtCode(),districtType,field).stream()
+            .map(peer->density(number(peer.population()),number(peer.area()))).toList();
+        var comparison=percentile(targetDensity,peers);
+        if(comparison==null) { missingCustomerDensity(result);return; }
+        scored(result,id,comparison.percentile(),Map.of("targetPopulation",population,"districtAreaSquareMeters",area,
+            "populationPerSquareKilometer",round(targetDensity),"populationDensityPercentile",round(comparison.percentile()*100),
+            "populationPeerCount",(double)comparison.peerCount()));
+    }
+
+    private static Double density(Double population,Double area) {
+        if(population==null||area==null||area<=0) return null;
+        double value=population/area*1_000_000;
+        return Double.isFinite(value)?value:null;
+    }
+
+    private static void missingCustomerDensity(Map<String,Criterion> result) {
+        result.put("customer-type",pending(rule("customer-type"),"MISSING_DATA",
+            "대상 상권의 인구·면적과 동일 분기·상권 유형의 유효한 비교 상권 "+MIN_PEERS+"곳이 필요합니다."));
     }
 
     private void scoreAge(Request r,JsonNode sales,Map<String,Criterion> result) {
@@ -178,13 +226,16 @@ public class AssessmentService {
         String type=target.path("TRDAR_SE_CD").asText("");
         if(type.isBlank()) return null;
         var peers=store.assessmentPeers(dataset,r.quarter(),r.districtCode(),industry,type,field);
+        return percentile(value,peers.stream().map(AssessmentService::number).toList());
+    }
+
+    private static Benchmark percentile(double value,List<Double> peers) {
         int count=0, lower=0, tied=0;
-        for(String raw:peers) {
-            Double peer=number(raw);
+        for(Double peer:peers) {
             if(peer==null) continue;
             count++;
             if(peer<value) lower++;
-            else if(peer.doubleValue()==value.doubleValue()) tied++;
+            else if(peer==value) tied++;
         }
         return count<MIN_PEERS?null:new Benchmark(value,(lower+tied*0.5)/count,count);
     }

@@ -283,6 +283,45 @@
 | `APT_HSHLD_CO` | 아파트 가구 수 |
 | `NON_APT_HSHLD_CO` | 비아파트 가구 수 |
 
+## 서울시 직장인구
+
+- ID: `seoul_workplace_population`
+- 제공기관: 서울특별시 열린데이터광장
+- 원본: [공식 문서](https://data.seoul.go.kr/dataList/OA-15569/A/1/datasetView.do)
+- 서비스: `VwsmTrdarWrcPopltnQq`
+- 설명: 상권·분기별 직장인구와 성별·연령별 집계. 서울시 상권분석서비스 인증키를 사용합니다. 원본 분기 필터를 지원하지 않아 전체 제공 분기를 수집하고 SQLite 조회에서 quarter로 필터합니다.
+- 원본 요청 파라미터: ``
+- 기본값: `{}`
+
+| 원본 필드 | 설명 |
+| --- | --- |
+| `STDR_YYQU_CD` | 기준 년분기 코드 |
+| `TRDAR_SE_CD` | 상권 유형 코드 |
+| `TRDAR_SE_CD_NM` | 상권 유형명 |
+| `TRDAR_CD` | 상권 코드 |
+| `TRDAR_CD_NM` | 상권명 |
+| `TOT_WRC_POPLTN_CO` | 전체 직장인구 수 |
+| `ML_WRC_POPLTN_CO` | 남성 직장인구 수 |
+| `FML_WRC_POPLTN_CO` | 여성 직장인구 수 |
+| `AGRDE_10_WRC_POPLTN_CO` | 10대 직장인구 수 |
+| `AGRDE_20_WRC_POPLTN_CO` | 20대 직장인구 수 |
+| `AGRDE_30_WRC_POPLTN_CO` | 30대 직장인구 수 |
+| `AGRDE_40_WRC_POPLTN_CO` | 40대 직장인구 수 |
+| `AGRDE_50_WRC_POPLTN_CO` | 50대 직장인구 수 |
+| `AGRDE_60_ABOVE_WRC_POPLTN_CO` | 60대 이상 직장인구 수 |
+| `MAG_10_WRC_POPLTN_CO` | 남성 10대 직장인구 수 |
+| `MAG_20_WRC_POPLTN_CO` | 남성 20대 직장인구 수 |
+| `MAG_30_WRC_POPLTN_CO` | 남성 30대 직장인구 수 |
+| `MAG_40_WRC_POPLTN_CO` | 남성 40대 직장인구 수 |
+| `MAG_50_WRC_POPLTN_CO` | 남성 50대 직장인구 수 |
+| `MAG_60_ABOVE_WRC_POPLTN_CO` | 남성 60대 이상 직장인구 수 |
+| `FAG_10_WRC_POPLTN_CO` | 여성 10대 직장인구 수 |
+| `FAG_20_WRC_POPLTN_CO` | 여성 20대 직장인구 수 |
+| `FAG_30_WRC_POPLTN_CO` | 여성 30대 직장인구 수 |
+| `FAG_40_WRC_POPLTN_CO` | 여성 40대 직장인구 수 |
+| `FAG_50_WRC_POPLTN_CO` | 여성 50대 직장인구 수 |
+| `FAG_60_ABOVE_WRC_POPLTN_CO` | 여성 60대 이상 직장인구 수 |
+
 ## 부동산원 통계표 목록
 
 - ID: `reb_tables`

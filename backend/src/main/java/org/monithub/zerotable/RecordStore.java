@@ -75,11 +75,12 @@ public class RecordStore {
     }
 
     record AssessmentRow(JsonNode payload, String collectedAt) {}
+    record PopulationArea(String population,String area) {}
 
     List<AssessmentRow> assessmentRows(String dataset,String quarter,String district,String industry) {
         return jdbc.query("""
             SELECT payload, collected_at FROM records
-            WHERE dataset=? AND quarter=? AND industry_code IS ? AND district_code=?
+            WHERE dataset=? AND quarter IS ? AND industry_code IS ? AND district_code=?
             """,(rs,i)->new AssessmentRow(parse(rs.getString(1)),rs.getString(2)),dataset,quarter,industry,district);
     }
 
@@ -92,6 +93,23 @@ public class RecordStore {
               AND json_extract(payload,'$.TRDAR_SE_CD')=?
             GROUP BY district_code HAVING count(*)=1
             """,(rs,i)->rs.getString("value"),"$."+field,"$."+field,dataset,quarter,industry,district,districtType);
+    }
+
+    List<PopulationArea> assessmentPopulationAreas(String dataset,String areaDataset,String quarter,String district,String districtType,String field) {
+        return jdbc.query("""
+            SELECT max(CASE WHEN json_type(p.payload,?) IN ('integer','real','text')
+                            THEN json_extract(p.payload,?) END) AS population,
+                   max(CASE WHEN json_type(a.payload,'$.RELM_AR') IN ('integer','real','text')
+                            THEN json_extract(a.payload,'$.RELM_AR') END) AS area
+            FROM records p
+            JOIN records a ON a.dataset=? AND a.quarter IS NULL AND a.industry_code IS NULL
+                           AND a.district_code=p.district_code
+            WHERE p.dataset=? AND p.quarter=? AND p.industry_code IS NULL AND p.district_code<>?
+              AND json_extract(p.payload,'$.TRDAR_SE_CD')=?
+              AND json_extract(a.payload,'$.TRDAR_SE_CD')=?
+            GROUP BY p.district_code HAVING count(*)=1
+            """,(rs,i)->new PopulationArea(rs.getString("population"),rs.getString("area")),
+            "$."+field,"$."+field,areaDataset,dataset,quarter,district,districtType,districtType);
     }
     public List<Models.Run> runs(int limit) {
         return jdbc.query("SELECT * FROM collection_runs ORDER BY id DESC LIMIT ?", (rs,i) -> new Models.Run(
