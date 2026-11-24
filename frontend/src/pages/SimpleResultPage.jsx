@@ -75,11 +75,6 @@ export default function SimpleResultPage() {
         </section>
       </div>
 
-      <div className="row-start">
-        <Link className="btn primary" to="/map">→ 지도에서 입지 비교</Link>
-        <span className="muted small">기본 상권은 지도에서 무료로 비교할 수 있어요.</span>
-      </div>
-
       <section className="upsell">
         <div className="row-between">
           <h2>고객·영업 시간·예산까지 반영해 확인해보세요</h2>

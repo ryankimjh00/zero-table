@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
 import { INDUSTRIES, SALES_MODES } from '../constants/industries.js'
 import ChoiceChips from '../components/ChoiceChips.jsx'
@@ -70,7 +70,6 @@ export default function BasicInputPage() {
       <button type="button" className="btn primary block" onClick={submit}>
         {isDetail ? '상세 질문 시작하기' : '→ 간단 결과 보기'}
       </button>
-      <Link className="text-link center" to={`/region?mode=${isDetail ? 'detail' : 'simple'}`}>아직 지역을 정하지 않았어요 ↗</Link>
 
       <p className="info-strip">
         {isDetail
