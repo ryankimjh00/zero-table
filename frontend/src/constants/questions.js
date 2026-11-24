@@ -1,4 +1,4 @@
-// 추가 질문 14개를 3단계로 나눈 데이터.
+// 추가 질문 3단계로 나눈 데이터.
 // 화면은 이 데이터를 읽어서 그리기만 하므로, 질문을 바꿀 때는 이 파일만 고치면 된다.
 // choice: 버튼 선택형, number: 숫자 입력형(fields가 2개면 한 줄에 칸 2개)
 // multiplier: 화면 단위를 서버 단위로 바꾸는 값 (만 원 → 원은 10000)
@@ -75,6 +75,14 @@ export const QUESTION_STEPS = [
         type: 'number', title: '하루에 테이블이 몇 번 정도 회전할 것으로 예상하나요?',
         fields: [{ key: 'dailyTurns', unit: '회전 / 일' }],
       },
+      {
+     type: 'number', title: '한 달에 며칠 정도 영업할 계획인가요?',
+     fields: [{ key: 'monthlyOperatingDays', unit: '일 / 월', integer: true, min: 1, max: 31 }],
+   },
+   {
+     type: 'number', title: '하루 평균 몇 팀이 방문할 것으로 예상하나요?',
+     fields: [{ key: 'expectedDailyTeams', unit: '팀 / 일', integer: true }],
+   },
     ],
   },
   {
@@ -109,6 +117,9 @@ export const QUESTION_STEPS = [
   },
 ]
 
+// 전체 추가 질문 개수
+export const TOTAL_QUESTIONS = QUESTION_STEPS.reduce((sum, step) => sum + step.questions.length, 0)
+
 // 모든 숫자 입력칸 정보 (서버 형식으로 바꿀 때 쓴다)
 export const NUMBER_FIELDS = QUESTION_STEPS
   .flatMap((step) => step.questions)
@@ -129,6 +140,8 @@ export const DEFAULT_ANSWERS = {
   seatCount: '15',
   tableCount: '5',
   dailyTurns: '3',
+  monthlyOperatingDays: '25',
+  expectedDailyTeams: '15',
   startupCapital: '5000',
   monthlyCapital: '300',
   experience: 'EMPLOYEE',

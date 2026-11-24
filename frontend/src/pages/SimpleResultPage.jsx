@@ -4,6 +4,7 @@ import SummaryBar from '../components/SummaryBar.jsx'
 import FlowStepper from '../components/FlowStepper.jsx'
 import { RealBadge } from '../components/Badges.jsx'
 import { assessmentScore, count, won } from '../format.js'
+import { TOTAL_QUESTIONS } from '../constants/questions.js'
 
 export default function SimpleResultPage() {
   const { base, simpleResult } = useAnswers()
@@ -77,7 +78,7 @@ export default function SimpleResultPage() {
         <p>5개 영역에 답하면 내 조건별 적합도를 확인해요. 입력한 음식·지역·판매 방식은 그대로 이어가요.</p>
         <p className="accent small">질문 완료 후 광고를 보고 크레딧을 받아 이번 상세 결과와 보고서를 함께 열 수 있어요.</p>
         <Link className="btn primary block" to="/questions/1">내 조건으로 상세 분석하기 →</Link>
-        <p className="muted small center">추가 질문 14개 (3단계) → 광고 크레딧으로 결과 열기 → 상세 분석</p>
+        <p className="muted small center">추가 질문 {TOTAL_QUESTIONS}개 (3단계) → 광고 크레딧으로 결과 열기 → 상세 분석</p>
       </section>
 
       <FlowStepper current={2} />

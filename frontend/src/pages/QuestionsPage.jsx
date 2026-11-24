@@ -1,6 +1,6 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
-import { QUESTION_STEPS } from '../constants/questions.js'
+import { QUESTION_STEPS, TOTAL_QUESTIONS } from '../constants/questions.js'
 import ChoiceChips from '../components/ChoiceChips.jsx'
 import NumberQuestion from '../components/NumberQuestion.jsx'
 import SummaryBar from '../components/SummaryBar.jsx'
@@ -15,7 +15,7 @@ export default function QuestionsPage() {
   const data = QUESTION_STEPS[step - 1]
   if (!data) return <Navigate to="/questions/1" replace />
 
-  // 앞 단계까지의 질문 수를 더해 이번 단계 질문 번호를 이어서 매긴다 (1~5, 6~10, 11~14)
+  // 앞 단계까지의 질문 수를 더해 이번 단계 질문 번호를 이어서 매긴다 
   const firstNumber = QUESTION_STEPS.slice(0, step - 1).reduce((sum, s) => sum + s.questions.length, 0) + 1
   const lastNumber = firstNumber + data.questions.length - 1
   const isLast = step === QUESTION_STEPS.length
@@ -36,7 +36,7 @@ export default function QuestionsPage() {
       <SummaryBar />
 
       <div className="progress-card">
-        <strong>총 14개 질문 · 3단계 | {step} / 3 · 질문 {firstNumber}–{lastNumber} · {data.section}</strong>
+        <strong>총 {TOTAL_QUESTIONS}개 질문 · 3단계 | {step} / 3 · 질문 {firstNumber}–{lastNumber} · {data.section}</strong>
         <div className="bar"><span style={{ width: `${(step / 3) * 100}%` }} /></div>
       </div>
 
