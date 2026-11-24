@@ -13,7 +13,7 @@ const DEFAULT_BASE = {
 
 export default function AnswersProvider({ children }) {
   const [base, setBase] = useState(DEFAULT_BASE) // 음식·동네·판매 방식
-  const [answers, setAnswers] = useState(DEFAULT_ANSWERS) // 추가 질문 14개
+  const [answers, setAnswers] = useState(DEFAULT_ANSWERS) // 추가 질문 응답
   const [simpleResult, setSimpleResult] = useState(null) // 간단 분석 결과
   const [detailResult, setDetailResult] = useState(null) // 상세 분석 결과
 
@@ -51,7 +51,8 @@ function toDetailBody(base, answers) {
     ...toBaseBody(base),
     customer: { type: answers.customerType, ageGroup: answers.ageGroup, visitPurpose: answers.visitPurpose },
     schedule: { businessDays: answers.businessDays, mainTime: answers.mainTime },
-    demand: { targetMonthlySales: n.targetMonthlySales },
+    demand: { targetMonthlySales: n.targetMonthlySales,monthlyOperatingDays: n.monthlyOperatingDays,
+      expectedDailyTeams: n.expectedDailyTeams, },
     strategy: {
       menuPrice: n.menuPrice, areaPyeong: n.areaPyeong, seatCount: n.seatCount, tableCount: n.tableCount,
       dailyTurns: n.dailyTurns, startupCapital: n.startupCapital, monthlyCapital: n.monthlyCapital,
