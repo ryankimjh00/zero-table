@@ -1,19 +1,18 @@
 import { RealBadge } from '../../components/Badges.jsx'
+import { assessmentScore } from '../../format.js'
 
-// 서버가 계산한 부분 점수를 그대로 보여 준다. totalScore는 전체 평가 전까지 null이다.
 export default function ScoreBanner({ assessment }) {
+  const score = assessmentScore(assessment)
+
   return (
     <section className="score-banner">
       <div>
-        <p className="small">계산된 항목 점수 <RealBadge /></p>
-        <p className="score-big">{assessment.earnedScore}<span> / {assessment.availablePoints}점</span></p>
+        <p className="small">종합 점수 <RealBadge /></p>
+        {score === null ? <h2>산정 보류</h2> : <p className="score-big">{score}<span> / 100점</span></p>}
       </div>
       <div>
-        <h2>종합 점수는 {assessment.totalScore === null ? '보류' : `${assessment.totalScore}점`}예요.</h2>
-        <p className="small">
-          전체 100점 중 {assessment.coveragePercent}%만 계산할 수 있어요(규칙 {assessment.ruleVersion}).
-          나머지는 답변이 미정이거나 서버에 비교 자료가 없어 보류됐어요.
-        </p>
+        <h2>평가 배점 {assessment.coveragePercent}%</h2>
+        <p className="small">평가 가능한 항목의 결과를 100점으로 환산해요. 규칙 {assessment.ruleVersion}</p>
       </div>
     </section>
   )

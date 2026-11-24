@@ -12,11 +12,12 @@ const response = await fetch(`${baseUrl}/api/v1/assessments`, {
 });
 const result = await response.json();
 if (!response.ok) throw new Error(result.message);
-// 화면 예: 계산된 항목 31.49/56점, 종합 점수 보류
-const partialScore = `${result.earnedScore}/${result.availablePoints}점`;
+// 화면 예: 60 / 100점 · 평가 배점 61%
+const scoreLabel = result.scoreOutOf100 == null ? '산정 보류' : `${result.scoreOutOf100} / 100점`;
+const coverageLabel = `평가 배점 ${result.coveragePercent}%`;
 ```
 
-`2026-11-20-v2`에서 `schedule.canAdjustHours`, `demand.monthlyOperatingDays`, `demand.expectedDailyTeams`를 선택 입력으로 받습니다. `suggestions`가 있으면 추천 시간대와 비교 점수를 표시합니다. 영역과 세부 항목은 응답의 `categories`를 사용하고, `score=null` 항목에는 `reason`을 표시하세요.
+`customer.type`은 하나의 값을 받습니다. `WORKER`와 `RESIDENT`는 같은 분기·상권 유형의 인구 밀도로 평가합니다. `schedule.canAdjustHours`, `demand.monthlyOperatingDays`, `demand.expectedDailyTeams`는 선택 입력입니다. `suggestions`가 있으면 추천 시간대와 비교 점수를 표시합니다. 영역과 세부 항목은 응답의 `categories`를 사용하고, `score=null` 항목에는 `reason`을 표시하세요.
 
 ## 저장 데이터 조회
 

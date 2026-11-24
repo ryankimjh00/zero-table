@@ -32,7 +32,7 @@ public final class AssessmentModels {
         @Valid Strategy strategy, @Valid Readiness readiness) {}
 
     public record Customer(
-        @Schema(example="WORKER") CustomerType type,
+        @Schema(example="WORKER",description="직장인과 지역 주민은 상권별 직장인구·상주인구 밀도로 평가합니다. 학생과 관광객은 보류합니다.") CustomerType type,
         @Schema(example="TWENTIES",description="FIFTY_PLUS는 50대와 60대 이상을 합산합니다.") AgeGroup ageGroup,
         @Schema(example="WORK_SCHOOL") VisitPurpose visitPurpose) {}
     public record Schedule(
@@ -55,11 +55,12 @@ public final class AssessmentModels {
         @Schema(example="EMPLOYEE") Experience experience,
         @Schema(example="FULL_TIME") Participation participation) {}
 
-    @Schema(name="AssessmentResult",description="미평가 항목은 점수가 null입니다. earnedScore/availablePoints로 부분 결과를 표시하고, totalScore는 전체 100점이 평가될 때만 제공합니다.")
-    public record Result(@Schema(example="2026-11-20-v2") String ruleVersion, @Schema(example="PARTIAL") String status,
+    @Schema(name="AssessmentResult",description="미평가 항목은 점수가 null입니다. 종합 화면에는 평가된 항목을 100점 만점으로 환산한 scoreOutOf100과 평가 배점 비율을 함께 표시합니다.")
+    public record Result(@Schema(example="2026-11-24-v3") String ruleVersion, @Schema(example="PARTIAL") String status,
         @Schema(nullable=true,description="전체 평가 전에는 null") Double totalScore,
-        @Schema(example="31.49") double earnedScore, @Schema(example="56") int availablePoints, @Schema(example="100") int maxScore,
-        @Schema(example="56",description="전체 100점 중 평가 가능한 배점 비율") double coveragePercent,
+        @Schema(nullable=true,example="60",description="100 × earnedScore ÷ availablePoints. 평가된 항목이 0개면 null입니다.") Double scoreOutOf100,
+        @Schema(example="36.60") double earnedScore, @Schema(example="61") int availablePoints, @Schema(example="100") int maxScore,
+        @Schema(example="61",description="전체 100점 중 평가 가능한 배점 비율") double coveragePercent,
         List<Category> categories, Map<String,Double> indicators, List<Source> sources,
         List<ScheduleSuggestion> suggestions, List<String> notes) {}
     public record ScheduleSuggestion(TimeSlot currentTime, TimeSlot suggestedTime,

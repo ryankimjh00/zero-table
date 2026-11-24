@@ -10,3 +10,9 @@ export function count(value, unit) {
   if (value === null || value === undefined) return '자료 없음'
   return `${Math.round(value).toLocaleString()}${unit}`
 }
+
+export function assessmentScore(assessment) {
+  if (assessment.availablePoints <= 0) return null
+  return assessment.scoreOutOf100
+    ?? Math.round(10000 * assessment.earnedScore / assessment.availablePoints) / 100
+}

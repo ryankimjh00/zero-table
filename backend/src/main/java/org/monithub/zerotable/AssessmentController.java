@@ -21,11 +21,11 @@ public class AssessmentController {
     public AssessmentController(AssessmentService service) { this.service=service; }
 
     @GetMapping("/rules")
-    @Operation(summary="100점 배점과 계산 규칙",description="세부 배점과 초안 산식을 제공합니다. 최대 56점분을 계산할 수 있습니다.")
+    @Operation(summary="100점 배점과 계산 규칙",description="세부 배점과 산식을 제공합니다. 목표 고객 유형이 직장인 또는 지역 주민이면 최대 61점분을 계산할 수 있습니다.")
     public AssessmentModels.RuleSet rules() { return service.rules(); }
 
     @PostMapping(consumes="application/json")
-    @Operation(summary="창업 설문 점수 계산",description="1·2·5번은 선택형, 3·4번은 숫자 입력입니다. 미정은 null 또는 UNDECIDED로 보냅니다. 미정·자료 누락·기준 협의 중인 항목은 보류합니다. 전체 평가 전 totalScore는 null입니다.")
+    @Operation(summary="창업 설문 점수 계산",description="1·2·5번은 선택형, 3·4번은 숫자 입력입니다. 미정·자료 누락·기준 협의 중인 항목은 보류합니다. 계산 가능한 항목의 종합점수는 scoreOutOf100으로 반환합니다.")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content=@Content(examples=@ExampleObject(value="""
         {"quarter":"20262","districtCode":"3111083","industryCode":"CS100010",
          "customer":{"type":"WORKER","ageGroup":"TWENTIES","visitPurpose":"WORK_SCHOOL"},

@@ -20,7 +20,7 @@ export default function CriteriaSection({ assessment }) {
         <div key={c.id} className="panel">
           <div className="row-between">
             <h3>{c.name}</h3>
-            <strong>{c.score === null ? '보류' : `${c.score} / ${c.availablePoints}점`} <span className="muted small">(배점 {c.maxScore})</span></strong>
+            <strong>{c.score === null ? '보류' : `획득 ${c.score}점`} <span className="muted small">· 배점 {c.maxScore}점</span></strong>
           </div>
           <ul className="criteria-list">
             {c.criteria.map((item) => (
@@ -28,7 +28,7 @@ export default function CriteriaSection({ assessment }) {
                 <span>{item.name}</span>
                 <span className={`status ${item.status}`}>{STATUS_LABEL[item.status] ?? item.status}</span>
                 <span className="criteria-value">
-                  {item.score === null ? item.reason : `${item.score} / ${item.maxScore}점`}
+                  {item.score === null ? item.reason : `획득 ${item.score}점 · 배점 ${item.maxScore}점`}
                 </span>
               </li>
             ))}

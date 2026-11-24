@@ -21,8 +21,8 @@ paths:
       tags:
       - 창업 계획 평가
       summary: 창업 설문 점수 계산
-      description: "1·2·5번은 선택형, 3·4번은 숫자 입력입니다. 미정은 null 또는 UNDECIDED로 보냅니다. 미정·자\
-        료 누락·기준 협의 중인 항목은 보류합니다. 전체 평가 전 totalScore는 null입니다."
+      description: "1·2·5번은 선택형, 3·4번은 숫자 입력입니다. 미정·자료 누락·기준 협의 중인 항목은 보류합니다. 계산 가\
+        능한 항목의 종합점수는 scoreOutOf100으로 반환합니다."
       operationId: assess
       requestBody:
         content:
@@ -374,7 +374,7 @@ paths:
       tags:
       - 창업 계획 평가
       summary: 100점 배점과 계산 규칙
-      description: 세부 배점과 초안 산식을 제공합니다. 최대 56점분을 계산할 수 있습니다.
+      description: 세부 배점과 산식을 제공합니다. 목표 고객 유형이 직장인 또는 지역 주민이면 최대 61점분을 계산할 수 있습니다.
       operationId: rules
       responses:
         "200":
@@ -424,6 +424,7 @@ components:
       properties:
         type:
           type: string
+          description: 직장인과 지역 주민은 상권별 직장인구·상주인구 밀도로 평가합니다. 학생과 관광객은 보류합니다.
           enum:
           - WORKER
           - STUDENT
@@ -581,12 +582,12 @@ components:
           type: string
     AssessmentResult:
       type: object
-      description: "미평가 항목은 점수가 null입니다. earnedScore/availablePoints로 부분 결과를 표시하고\
-        , totalScore는 전체 100점이 평가될 때만 제공합니다."
+      description: 미평가 항목은 점수가 null입니다. 종합 화면에는 평가된 항목을 100점 만점으로 환산한 scoreOutOf100과
+        평가 배점 비율을 함께 표시합니다.
       properties:
         ruleVersion:
           type: string
-          example: 2026-11-20-v2
+          example: 2026-11-24-v3
         status:
           type: string
           example: PARTIAL
@@ -596,14 +597,21 @@ components:
           - "null"
           format: double
           description: 전체 평가 전에는 null
+        scoreOutOf100:
+          type:
+          - number
+          - "null"
+          format: double
+          description: 100 × earnedScore ÷ availablePoints. 평가된 항목이 0개면 null입니다.
+          example: 60
         earnedScore:
           type: number
           format: double
-          example: 31.49
+          example: 36.6
         availablePoints:
           type: integer
           format: int32
-          example: 56
+          example: 61
         maxScore:
           type: integer
           format: int32
@@ -612,7 +620,7 @@ components:
           type: number
           format: double
           description: 전체 100점 중 평가 가능한 배점 비율
-          example: 56
+          example: 61
         categories:
           type: array
           items:
