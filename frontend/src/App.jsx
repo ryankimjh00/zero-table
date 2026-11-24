@@ -6,7 +6,7 @@ import AnalyzingPage from './pages/AnalyzingPage.jsx'
 import SimpleResultPage from './pages/SimpleResultPage.jsx'
 import QuestionsPage from './pages/QuestionsPage.jsx'
 import ResultOpenPage from './pages/ResultOpenPage.jsx'
-import ReportPage from './pages/ReportPage.jsx'
+import ReportPage from './pages/report/ReportPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 
 // 주소(URL)와 화면을 짝지어 둔 표. 화면 이동은 전부 이 표를 따른다.
