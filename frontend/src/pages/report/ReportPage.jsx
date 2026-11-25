@@ -48,7 +48,7 @@ export default function ReportPage() {
         monthlyCapital={plan.strategy.monthlyCapital}
       />
       <CriteriaSection assessment={assessment} quarter={plan.quarter} />
-      <ReportNotice />
+      <ReportNotice assessment={assessment} />
 
       <div className="row-between wrap">
         <Link className="text-link" to="/questions/1">← 추가 질문 답변 수정하기</Link>
