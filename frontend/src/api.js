@@ -64,6 +64,9 @@ export async function loadDistrictFacts(districtCode, industryCode) {
     pedestrians: pedestrians?.TOT_FLPOP_CO ?? null,
     residents: residents?.TOT_REPOP_CO ?? null,
     sameIndustryStores: stores?.SIMILR_INDUTY_STOR_CO ?? null,
+    franchiseStores: stores?.FRC_STOR_CO ?? null,
+    openRate: stores?.OPBIZ_RT ?? null,
+    closeRate: stores?.CLSBIZ_RT ?? null,
   }
 }
 

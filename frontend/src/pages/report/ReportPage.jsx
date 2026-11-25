@@ -42,6 +42,9 @@ export default function ReportPage() {
       />
       <CompetitionSection
         sameIndustryStores={facts.sameIndustryStores}
+        franchiseStores={facts.franchiseStores}
+        openRate={facts.openRate}
+        closeRate={facts.closeRate}
         indicators={assessment.indicators}
         menuPrice={plan.strategy.menuPrice}
       />

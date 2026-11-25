@@ -1,11 +1,18 @@
 import { RealBadge } from '../../components/Badges.jsx'
-import { count, won } from '../../format.js'
+import { count, percent, won } from '../../format.js'
 
 const PRICE_NOTICE =
   '같은 메뉴의 주변 시세 자료가 없어 가격을 비교하지 않았어요. 근처 가게의 비슷한 메뉴 가격과 구성을 직접 둘러보거나 배달 앱에서 확인해 보세요.'
 
 // 03 경쟁과 가격
-export default function CompetitionSection({ sameIndustryStores, indicators, menuPrice }) {
+export default function CompetitionSection({
+  sameIndustryStores,
+  franchiseStores,
+  openRate,
+  closeRate,
+  indicators,
+  menuPrice,
+}) {
   const displayPrice = won(menuPrice, '미입력')
 
   return (
@@ -19,6 +26,9 @@ export default function CompetitionSection({ sameIndustryStores, indicators, men
           <h3>상권 경쟁 참고값 <RealBadge /></h3>
           <ul className="fact-list">
             <li><span>같은 업종 점포 수</span><strong>{count(sameIndustryStores, '곳')}</strong></li>
+            <li><span>프랜차이즈 점포 수</span><strong>{count(franchiseStores, '곳')}</strong></li>
+            <li><span>개업률</span><strong>{percent(openRate)}</strong></li>
+            <li><span>폐업률</span><strong>{percent(closeRate)}</strong></li>
             <li><span>결제 1건당 금액</span><strong>{won(indicators?.averagePaymentAmount)}</strong></li>
             <li><span>점포당 월매출 참고값</span><strong>{won(indicators?.monthlySalesPerStore)}</strong></li>
           </ul>
