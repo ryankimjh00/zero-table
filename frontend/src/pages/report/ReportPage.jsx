@@ -47,7 +47,7 @@ export default function ReportPage() {
         startupCapital={plan.strategy.startupCapital}
         monthlyCapital={plan.strategy.monthlyCapital}
       />
-      <CriteriaSection assessment={assessment} />
+      <CriteriaSection assessment={assessment} quarter={plan.quarter} />
       <ReportNotice />
 
       <div className="row-between wrap">
