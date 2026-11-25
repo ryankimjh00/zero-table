@@ -37,6 +37,7 @@ export default function ReportPage() {
         mainTime={answers.mainTime}
         ageGroup={answers.ageGroup}
         businessDays={answers.businessDays}
+        monthlyOperatingDays={plan.demand?.monthlyOperatingDays}
         targetMonthlySales={plan.demand.targetMonthlySales}
         menuPrice={plan.strategy.menuPrice}
       />
