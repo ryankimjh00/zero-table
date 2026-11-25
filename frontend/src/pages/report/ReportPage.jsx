@@ -35,6 +35,8 @@ export default function ReportPage() {
       <DemandSection
         facts={facts}
         mainTime={answers.mainTime}
+        ageGroup={answers.ageGroup}
+        businessDays={answers.businessDays}
         targetMonthlySales={plan.demand.targetMonthlySales}
         menuPrice={plan.strategy.menuPrice}
       />
