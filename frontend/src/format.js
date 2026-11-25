@@ -11,6 +11,14 @@ export function count(value, unit) {
   return `${Math.round(value).toLocaleString()}${unit}`
 }
 
+export function percent(value, fallback = '자료 없음') {
+  if (value === null || value === undefined || value === '') return fallback
+  const num = Number(value)
+  if (Number.isNaN(num)) return fallback
+  // 소수점 둘째 자리까지 표시하되 불필요한 0 제거
+  return `${Number(num.toFixed(1))}%`
+}
+
 export function assessmentScore(assessment) {
   if (assessment.availablePoints <= 0) return null
   return assessment.scoreOutOf100
