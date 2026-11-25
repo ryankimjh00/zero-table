@@ -58,6 +58,8 @@ export async function loadDistrictFacts(districtCode, industryCode) {
   ])
   return {
     timeSlots: sales ? hourlySalesIndex(sales) : null,
+    ageSlots: sales ? ageSalesIndex(sales) : null,
+    daySlots: sales ? daySalesIndex(sales) : null,
     quarterSales: sales?.THSMON_SELNG_AMT ?? null,
     pedestrians: pedestrians?.TOT_FLPOP_CO ?? null,
     residents: residents?.TOT_REPOP_CO ?? null,
@@ -78,4 +80,34 @@ function hourlySalesIndex(sales) {
   const max = Math.max(...slots.map((s) => s.value))
   if (!max) return null
   return slots.map((s) => ({ label: s.label, index: Math.round((s.value / max) * 100) }))
+}
+
+// 연령대별 매출 지수 (50대와 60대 이상은 합산). 가장 높은 연령대를 100으로 맞춘다.
+function ageSalesIndex(sales) {
+  const slots = [
+    { key: 'TEENS', label: '10대', value: sales.AGRDE_10_SELNG_AMT ?? 0 },
+    { key: 'TWENTIES', label: '20대', value: sales.AGRDE_20_SELNG_AMT ?? 0 },
+    { key: 'THIRTIES', label: '30대', value: sales.AGRDE_30_SELNG_AMT ?? 0 },
+    { key: 'FORTIES', label: '40대', value: sales.AGRDE_40_SELNG_AMT ?? 0 },
+    { key: 'FIFTY_PLUS', label: '50대 이상', value: (sales.AGRDE_50_SELNG_AMT ?? 0) + (sales.AGRDE_60_ABOVE_SELNG_AMT ?? 0) },
+  ]
+  const max = Math.max(...slots.map((s) => s.value))
+  if (!max) return null
+  return slots.map((s) => ({ key: s.key, label: s.label, index: Math.round((s.value / max) * 100) }))
+}
+
+// 요일별 매출 지수 (월~일). 가장 높은 요일을 100으로 맞춘다.
+function daySalesIndex(sales) {
+  const slots = [
+    { key: 'MON', label: '월', isWeekend: false, value: sales.MON_SELNG_AMT ?? 0 },
+    { key: 'TUE', label: '화', isWeekend: false, value: sales.TUES_SELNG_AMT ?? 0 },
+    { key: 'WED', label: '수', isWeekend: false, value: sales.WED_SELNG_AMT ?? 0 },
+    { key: 'THU', label: '목', isWeekend: false, value: sales.THUR_SELNG_AMT ?? 0 },
+    { key: 'FRI', label: '금', isWeekend: false, value: sales.FRI_SELNG_AMT ?? 0 },
+    { key: 'SAT', label: '토', isWeekend: true, value: sales.SAT_SELNG_AMT ?? 0 },
+    { key: 'SUN', label: '일', isWeekend: true, value: sales.SUN_SELNG_AMT ?? 0 },
+  ]
+  const max = Math.max(...slots.map((s) => s.value))
+  if (!max) return null
+  return slots.map((s) => ({ key: s.key, label: s.label, isWeekend: s.isWeekend, index: Math.round((s.value / max) * 100) }))
 }
