@@ -2,8 +2,8 @@ import { RealBadge } from '../../components/Badges.jsx'
 import { count, won } from '../../format.js'
 import { labelOf } from './reportLabels.js'
 
-// 한 달 영업일 가정. 시안 계산식(하루 필요 주문 수)에 쓰며, 질문으로 받지 않아 고정한다.
-const ASSUMED_OPERATING_DAYS = 22
+// 한 달 영업일 기본 가정값. 입력값이 없을 때 사용한다.
+const DEFAULT_OPERATING_DAYS = 22
 
 // 02 고객과 수요
 export default function DemandSection({
@@ -11,12 +11,22 @@ export default function DemandSection({
   mainTime,
   ageGroup,
   businessDays,
+  monthlyOperatingDays,
   targetMonthlySales,
   menuPrice,
 }) {
   const mainTimeLabel = labelOf('mainTime', mainTime)
-  const monthlyOrders = targetMonthlySales && menuPrice ? targetMonthlySales / menuPrice : null
-  const dailyOrders = monthlyOrders ? monthlyOrders / ASSUMED_OPERATING_DAYS : null
+
+  // 영업일 수: 입력값이 있으면 사용하고 없으면 기본 22일 가정
+  const operatingDays = monthlyOperatingDays || DEFAULT_OPERATING_DAYS
+  const operatingDaysLabel = monthlyOperatingDays
+    ? `월 ${monthlyOperatingDays}일 영업`
+    : `월 ${DEFAULT_OPERATING_DAYS}일 영업 가정`
+
+  // 목표 매출 또는 메뉴 가격이 입력되지 않았으면 주문 수 계산 불가 -> '미입력' 표시
+  const hasSalesAndPrice = Boolean(targetMonthlySales && menuPrice)
+  const monthlyOrders = hasSalesAndPrice ? targetMonthlySales / menuPrice : null
+  const dailyOrders = monthlyOrders ? monthlyOrders / operatingDays : null
 
   // 영업 요일 선택에 따른 요일 강조 여부 판정
   const isDaySelected = (slot) => {
@@ -86,11 +96,24 @@ export default function DemandSection({
       </div>
 
       <div className="three-col">
-        <div className="panel"><p className="muted small">입력한 월 매출 목표</p><p className="stat">{won(targetMonthlySales)}</p></div>
-        <div className="panel"><p className="muted small">필요한 월 주문 수</p><p className="stat">{monthlyOrders ? `약 ${Math.round(monthlyOrders).toLocaleString()}건` : '계산 불가'}</p>
-          <p className="muted small">목표 ÷ 메뉴 가격 (1주문 1메뉴 가정)</p></div>
-        <div className="panel"><p className="muted small">하루 필요한 주문 수</p><p className="stat">{dailyOrders ? `약 ${Math.round(dailyOrders)}건` : '계산 불가'}</p>
-          <p className="muted small">월 {ASSUMED_OPERATING_DAYS}일 영업 가정</p></div>
+        <div className="panel">
+          <p className="muted small">입력한 월 매출 목표</p>
+          <p className="stat">{won(targetMonthlySales, '미입력')}</p>
+        </div>
+        <div className="panel">
+          <p className="muted small">필요한 월 주문 수</p>
+          <p className="stat">
+            {hasSalesAndPrice ? `약 ${Math.round(monthlyOrders).toLocaleString()}건` : '미입력'}
+          </p>
+          <p className="muted small">목표 ÷ 메뉴 가격 (1주문 1메뉴 가정)</p>
+        </div>
+        <div className="panel">
+          <p className="muted small">하루 필요한 주문 수</p>
+          <p className="stat">
+            {hasSalesAndPrice ? `약 ${Math.round(dailyOrders).toLocaleString()}건` : '미입력'}
+          </p>
+          <p className="muted small">{operatingDaysLabel}</p>
+        </div>
       </div>
     </section>
   )
