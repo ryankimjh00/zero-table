@@ -31,6 +31,8 @@ export function loadDistricts() {
         type: d.TRDAR_SE_CD_NM,
         gu: d.SIGNGU_CD_NM,
         dong: d.ADSTRD_CD_NM,
+        x: Number(d.XCNTS_VALUE) || 0,
+        y: Number(d.YDNTS_VALUE) || 0,
       })))
       .catch((error) => {
         districtsPromise = null // 실패하면 다음에 다시 시도할 수 있게 비운다
@@ -68,6 +70,39 @@ export async function loadDistrictFacts(districtCode, industryCode) {
     openRate: stores?.OPBIZ_RT ?? null,
     closeRate: stores?.CLSBIZ_RT ?? null,
   }
+}
+
+// 기준 상권 주변의 가까운 비교 상권 목록과 데이터 조회 (반경 2km 내외, 최대 3곳)
+export async function loadNearbyDistrictsComparison(targetDistrictCode, industryCode) {
+  const allDistricts = await loadDistricts()
+  const target = allDistricts.find((d) => d.code === targetDistrictCode)
+  if (!target || !target.x || !target.y) return []
+
+  // 거리(미터) 계산 후 가까운 순으로 정렬 (기준 상권 본인 제외)
+  const nearbyCandidates = allDistricts
+    .filter((d) => d.code !== targetDistrictCode && d.x && d.y)
+    .map((d) => {
+      const distance = Math.round(Math.hypot(d.x - target.x, d.y - target.y))
+      return { ...d, distance }
+    })
+    .sort((a, b) => a.distance - b.distance)
+
+  // 반경 2000m 이내 우선 선택, 부족하면 가장 가까운 3곳 선택
+  const within2km = nearbyCandidates.filter((d) => d.distance <= 2000)
+  const selected = (within2km.length >= 3 ? within2km : nearbyCandidates).slice(0, 3)
+
+  // 선택된 상권들의 공공데이터 병렬 조회
+  const comparisonResults = await Promise.all(
+    selected.map(async (district) => {
+      const facts = await loadDistrictFacts(district.code, industryCode)
+      return {
+        district,
+        facts,
+      }
+    })
+  )
+
+  return comparisonResults
 }
 
 // 시간대마다 길이가 달라(오전 5시간, 점심 3시간 …) 시간당 매출로 바꾼 뒤
