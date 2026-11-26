@@ -8,6 +8,8 @@ const COST_NOTICE =
 
 // 04 비용과 자본
 export default function CostSection({ startupCapital, monthlyCapital }) {
+  const monthlyBudgetLabel = monthlyCapital ? `월 ${won(monthlyCapital)}` : '월 운영 자금'
+
   return (
     <section id="cost" className="report-section">
       <p className="eyebrow">04 / 비용과 자본</p>
@@ -27,7 +29,7 @@ export default function CostSection({ startupCapital, monthlyCapital }) {
         </div>
         <div className="panel warn">
           <p className="small">먼저 확인할 항목</p>
-          <h3>월 {won(monthlyCapital, '미입력')}은 임대료만을 위한 예산이 아니에요.</h3>
+          <h3>{monthlyBudgetLabel}은 임대료만을 위한 예산이 아니에요.</h3>
           <p className="small">임대료·관리비·인건비·재료비·포장재 등 전체 운영 자금입니다. 실제 임대료가 아직 입력되지 않아 운영 가능 여부는 판단할 수 없어요.</p>
         </div>
       </div>
