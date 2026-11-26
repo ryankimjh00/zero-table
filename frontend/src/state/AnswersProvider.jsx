@@ -8,7 +8,7 @@ const DEFAULT_BASE = {
   food: '수제버거',
   industryCode: 'CS100006',
   district: { code: '3120052', name: '성수역', type: '발달상권', gu: '성동구', dong: '성수2가3동' },
-  salesMode: '포장',
+  salesModes: ['포장'],
 }
 
 export default function AnswersProvider({ children }) {

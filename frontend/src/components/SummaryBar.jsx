@@ -12,7 +12,7 @@ export default function SummaryBar({ editTo = '/input?mode=detail' }) {
       <span className="summary-icon" aria-hidden="true">🍴</span>
       <strong>{base.food || industry?.name}</strong>
       <span>{base.district ? `${base.district.gu} ${base.district.name}` : '동네 미정'}</span>
-      <span className="tag">{base.salesMode}</span>
+      <span className="tag">{base.salesModes.length > 0 ? base.salesModes.join(' · ') : '판매 방식 미정'}</span>
       <span className="summary-code">{industry?.name} · 상권 {base.district?.code}</span>
       <Link to={editTo} className="summary-edit">기본 정보 수정 ↗</Link>
     </div>

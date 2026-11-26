@@ -52,6 +52,7 @@ export default function ReportPage() {
         closeRate={facts.closeRate}
         indicators={assessment.indicators}
         menuPrice={plan.strategy.menuPrice}
+        salesModes={base.salesModes}
       />
       <CostSection
         startupCapital={plan.strategy.startupCapital}

@@ -29,7 +29,7 @@ export default function ReportHeader({ base, answers, plan }) {
       <div className="recap">
         <div><p className="muted small">고객 · 판매 계획</p>
           <strong>{labelOf('customerType', answers.customerType)} / {labelOf('ageGroup', answers.ageGroup)} / {labelOf('visitPurpose', answers.visitPurpose)}</strong>
-          <p className="muted small">{labelOf('businessDays', answers.businessDays)} · {labelOf('mainTime', answers.mainTime)} 중심 / {base.salesMode}</p></div>
+          <p className="muted small">{labelOf('businessDays', answers.businessDays)} · {labelOf('mainTime', answers.mainTime)} 중심 / {base.salesModes.join(' · ') || '판매 방식 미정'}</p></div>
         <div><p className="muted small">매출 · 점포 계획</p>
           <strong>월 목표 {won(targetMonthlySales)} · 메뉴 {won(menuPrice)}</strong>
           <p className="muted small">{answers.areaPyeong ?? '-'}평 · {answers.seatCount ?? '-'}좌석 · {answers.tableCount ?? '-'}테이블 · 하루 {answers.dailyTurns ?? '-'}회전</p></div>
