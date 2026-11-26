@@ -31,7 +31,11 @@ export default function ReportPage() {
         <a href="#criteria">05 항목별 평가</a>
       </nav>
 
-      <LocationSection />
+      <LocationSection
+        currentDistrict={base.district}
+        industryCode={base.industryCode}
+        currentFacts={facts}
+      />
       <DemandSection
         facts={facts}
         mainTime={answers.mainTime}
