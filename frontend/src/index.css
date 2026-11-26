@@ -169,6 +169,11 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .compare-table tbody tr:last-child .is-base { border-radius: 0 0 10px 10px; }
 .compare-sub { display: block; margin-top: 2px; font-size: 12px; font-weight: 400; color: var(--muted); }
 
+/* ---------- 03 판매 방식 운영 점검 ---------- */
+.sales-check-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.sales-check-list li { display: grid; gap: 6px; padding: 14px 16px; background: var(--gray); border-radius: 10px; }
+.sales-check-list .tag { justify-self: start; }
+
 /* ---------- 추가 질문 ---------- */
 .progress-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; display: grid; gap: 12px; font-size: 14px; }
 .question-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 28px; display: grid; gap: 30px; }

@@ -20,6 +20,13 @@ export default function BasicInputPage() {
     setBase({ ...base, ...changes })
   }
 
+  // 누를 때마다 켜고 끈다. 순서는 선택지 순서(매장 식사 → 포장 → 배달)로 맞춘다.
+  function toggleSalesMode(mode) {
+    const isOn = base.salesModes.includes(mode)
+    const salesModes = SALES_MODES.filter((item) => (item === mode ? !isOn : base.salesModes.includes(item)))
+    update({ salesModes })
+  }
+
   function submit() {
     // 서버는 업종 코드와 상권 코드가 없으면 계산할 수 없으므로 미리 막는다.
     if (!base.industryCode || !base.district) {
@@ -61,9 +68,9 @@ export default function BasicInputPage() {
 
       <div className="form-block">
         <p className="form-label">03 어떻게 판매할 생각인가요?</p>
-        <ChoiceChips options={SALES_MODES} selected={base.salesMode} radio={false}
-          onSelect={(salesMode) => update({ salesMode })} />
-        <p className="field-hint">가장 중심이 될 판매 방식 하나를 선택해주세요. (화면 표시용 · API에는 없는 항목)</p>
+        <ChoiceChips options={SALES_MODES} selected={base.salesModes} radio={false}
+          onSelect={toggleSalesMode} />
+        <p className="field-hint">해당하는 판매 방식을 모두 선택해주세요. (화면 표시용 · API에는 없는 항목)</p>
       </div>
 
       {error && <p className="error">{error}</p>}
