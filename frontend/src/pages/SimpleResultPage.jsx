@@ -4,27 +4,36 @@ import SummaryBar from '../components/SummaryBar.jsx'
 import FlowStepper from '../components/FlowStepper.jsx'
 import OutdatedNotice from '../components/OutdatedNotice.jsx'
 import { RealBadge } from '../components/Badges.jsx'
-import { assessmentScore, count, won } from '../format.js'
+import FactsRetryNotice from '../components/FactsRetryNotice.jsx'
+import { isFactFailed, retryFailedFacts } from '../api.js'
+import { assessmentScore, count, FAILED_TEXT, won } from '../format.js'
 import { TOTAL_QUESTIONS } from '../constants/questions.js'
 
 export default function SimpleResultPage() {
-  const { base: currentBase, simpleResult } = useAnswers()
+  const { base: currentBase, simpleResult, setSimpleResult } = useAnswers()
   if (!simpleResult) return <Navigate to="/input?mode=simple" replace />
 
   // 결과 문장은 분석한 순간의 기본 입력으로 쓴다.
-  const { assessment, facts, input } = simpleResult
+  const { assessment, facts, input, requestBody } = simpleResult
   const { base } = input
   const score = assessmentScore(assessment)
+
+  // 불러오지 못한 상권 자료만 다시 받아 결과에 넣는다
+  async function retryFacts() {
+    const retried = await retryFailedFacts(facts, requestBody.districtCode, requestBody.industryCode)
+    setSimpleResult((prev) => ({ ...prev, facts: retried }))
+  }
+  const valueOrFailed = (sourceName, text) => (isFactFailed(facts, sourceName) ? FAILED_TEXT : text)
 
   const cards = [
     {
       tag: '수요', tone: 'green',
-      title: `분기 유동인구 ${count(facts.pedestrians, '명')}`,
-      text: `상주인구 ${count(facts.residents, '명')}. 같은 분기 서울시 상권 자료 기준이에요.`,
+      title: `분기 유동인구 ${valueOrFailed('pedestrians', count(facts.pedestrians, '명'))}`,
+      text: `상주인구 ${valueOrFailed('residents', count(facts.residents, '명'))}. 같은 분기 서울시 상권 자료 기준이에요.`,
     },
     {
       tag: '경쟁', tone: 'blue',
-      title: `같은 업종 점포 ${count(facts.sameIndustryStores, '곳')}`,
+      title: `같은 업종 점포 ${valueOrFailed('stores', count(facts.sameIndustryStores, '곳'))}`,
       text: '같은 메뉴만으로는 눈에 띄기 어려울 수 있어요. 비슷한 업종도 함께 비교해보세요.',
     },
     {
@@ -48,6 +57,11 @@ export default function SimpleResultPage() {
       </h1>
       <SummaryBar analyzedBase={base} editTo="/input?mode=simple" />
 
+      <FactsRetryNotice
+        facts={facts}
+        usedSources={['pedestrians', 'residents', 'stores']}
+        onRetry={retryFacts}
+      />
       <div className="result-grid">
         <section className="score-card">
           <div className="row-between">

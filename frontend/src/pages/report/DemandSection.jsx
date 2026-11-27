@@ -1,5 +1,7 @@
 import { RealBadge } from '../../components/Badges.jsx'
-import { count, won } from '../../format.js'
+import FactsRetryNotice from '../../components/FactsRetryNotice.jsx'
+import { isFactFailed } from '../../api.js'
+import { count, FAILED_TEXT, won } from '../../format.js'
 import { labelOf } from './reportLabels.js'
 
 // 한 달 영업일 기본 가정값. 입력값이 없을 때 사용한다.
@@ -8,6 +10,7 @@ const DEFAULT_OPERATING_DAYS = 22
 // 02 고객과 수요
 export default function DemandSection({
   facts,
+  onRetryFacts,
   mainTime,
   ageGroup,
   businessDays,
@@ -37,10 +40,20 @@ export default function DemandSection({
     return false
   }
 
+  // 불러오지 못한 자료의 칸은 '자료 없음' 대신 '불러오지 못함'으로 쓴다
+  const salesFailed = isFactFailed(facts, 'sales')
+  const valueOrFailed = (sourceName, text) => (isFactFailed(facts, sourceName) ? FAILED_TEXT : text)
+  const chartEmptyMessage = (text) => (salesFailed ? '매출 자료를 불러오지 못했어요.' : text)
+
   return (
     <section id="demand" className="report-section">
       <p className="eyebrow">02 / 고객과 수요</p>
       <h2 className="section-title">{mainTimeLabel} 시간대를 중심으로 살펴봐요</h2>
+      <FactsRetryNotice
+        facts={facts}
+        usedSources={['sales', 'pedestrians', 'residents']}
+        onRetry={onRetryFacts}
+      />
 
       {/* 상권 수요 참고값: 3개의 독립된 미니 카드로 분리하여 명확한 구분 제공 */}
       <div className="panel demand-facts-panel">
@@ -51,15 +64,15 @@ export default function DemandSection({
         <div className="three-col demand-fact-cards">
           <div className="demand-fact-card">
             <span className="muted small">분기 유동인구</span>
-            <strong className="demand-fact-value">{count(facts.pedestrians, '명')}</strong>
+            <strong className="demand-fact-value">{valueOrFailed('pedestrians', count(facts.pedestrians, '명'))}</strong>
           </div>
           <div className="demand-fact-card">
             <span className="muted small">상주인구</span>
-            <strong className="demand-fact-value">{count(facts.residents, '명')}</strong>
+            <strong className="demand-fact-value">{valueOrFailed('residents', count(facts.residents, '명'))}</strong>
           </div>
           <div className="demand-fact-card">
             <span className="muted small">분기 업종 추정매출</span>
-            <strong className="demand-fact-value">{won(facts.quarterSales)}</strong>
+            <strong className="demand-fact-value">{valueOrFailed('sales', won(facts.quarterSales))}</strong>
           </div>
         </div>
       </div>
@@ -71,7 +84,7 @@ export default function DemandSection({
           <BarChart
             slots={facts.timeSlots}
             isSelected={(slot) => slot.label === mainTimeLabel}
-            emptyMessage="이 상권·업종의 시간대 매출 자료가 없어요."
+            emptyMessage={chartEmptyMessage('이 상권·업종의 시간대 매출 자료가 없어요.')}
           />
           <p className="muted small">가장 높은 시간대를 100으로 맞춘 값이에요.</p>
         </div>
@@ -80,7 +93,7 @@ export default function DemandSection({
           <BarChart
             slots={facts.ageSlots}
             isSelected={(slot) => slot.key === ageGroup}
-            emptyMessage="이 상권·업종의 연령대 매출 자료가 없어요."
+            emptyMessage={chartEmptyMessage('이 상권·업종의 연령대 매출 자료가 없어요.')}
           />
           <p className="muted small">50대 이상은 50대·60대 이상 합산이에요.</p>
         </div>
@@ -89,7 +102,7 @@ export default function DemandSection({
           <BarChart
             slots={facts.daySlots}
             isSelected={isDaySelected}
-            emptyMessage="이 상권·업종의 요일별 매출 자료가 없어요."
+            emptyMessage={chartEmptyMessage('이 상권·업종의 요일별 매출 자료가 없어요.')}
           />
           <p className="muted small">가장 높은 요일을 100으로 맞춘 값이에요.</p>
         </div>
