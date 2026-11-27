@@ -48,6 +48,12 @@ export const QUESTION_STEPS = [
           { value: 'LATE_NIGHT', label: '심야' }, UNDECIDED,
         ],
       },
+      {
+        type: 'choice', key: 'canAdjustHours', title: '영업 요일과 시간대를 조정할 수 있나요?',
+        options: [
+          { value: 'YES', label: '가능' }, { value: 'NO', label: '불가' }, UNDECIDED,
+        ],
+      },
     ],
   },
   {
@@ -76,13 +82,13 @@ export const QUESTION_STEPS = [
         fields: [{ key: 'dailyTurns', unit: '회전 / 일' }],
       },
       {
-     type: 'number', title: '한 달에 며칠 정도 영업할 계획인가요?',
-     fields: [{ key: 'monthlyOperatingDays', unit: '일 / 월', integer: true, min: 1, max: 31 }],
-   },
-   {
-     type: 'number', title: '하루 평균 몇 팀이 방문할 것으로 예상하나요?',
-     fields: [{ key: 'expectedDailyTeams', unit: '팀 / 일', integer: true }],
-   },
+        type: 'number', title: '한 달에 며칠 정도 영업할 계획인가요?',
+        fields: [{ key: 'monthlyOperatingDays', unit: '일 / 월', integer: true, min: 1, max: 31 }],
+      },
+      {
+        type: 'number', title: '하루 평균 몇 팀이 방문할 것으로 예상하나요?',
+        fields: [{ key: 'expectedDailyTeams', unit: '팀 / 일', integer: true }],
+      },
     ],
   },
   {
@@ -134,6 +140,7 @@ export const DEFAULT_ANSWERS = {
   visitPurpose: 'WORK_SCHOOL',
   businessDays: 'WEEKDAYS',
   mainTime: 'LUNCH',
+  canAdjustHours: 'YES',
   targetMonthlySales: '2000',
   menuPrice: '12000',
   areaPyeong: '10',
