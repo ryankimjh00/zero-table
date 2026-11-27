@@ -1,4 +1,4 @@
-/* 시안 색과 기본 글꼴. 모든 화면이 이 값들을 같이 쓴다. */
+/* 전역 색상 변수와 기본 글꼴, 모든 화면의 공통·구역별 스타일을 정의한다. */
 :root {
   --blue: #3561f0;
   --blue-soft: #eef2fe;
@@ -23,7 +23,7 @@ h1, h2, h3, p { margin: 0; }
 a { color: inherit; text-decoration: none; }
 button, input, select { font: inherit; color: inherit; }
 
-/* ---------- 공통 틀 ---------- */
+/* ---------- 공통 · 전체 틀 ---------- */
 .app { min-height: 100vh; display: flex; flex-direction: column; }
 .site-header { background: #fff; border-bottom: 1px solid var(--line); }
 .site-header-inner { max-width: 1180px; margin: 0 auto; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -54,7 +54,7 @@ button, input, select { font: inherit; color: inherit; }
 .accent { color: var(--blue); }
 .error { color: var(--red); }
 
-/* ---------- 버튼과 작은 부품 ---------- */
+/* ---------- 공통 · 버튼과 작은 부품 ---------- */
 .btn { display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 13px 22px; border-radius: 10px; border: 1px solid transparent; font-weight: 600; cursor: pointer; }
 .btn.primary { background: var(--blue); color: #fff; }
 .btn.ghost { background: #fff; border-color: var(--line); }
@@ -81,20 +81,18 @@ button, input, select { font: inherit; color: inherit; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; }
-.chip.static { cursor: default; font-weight: 600; }
 .chip.selected { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); font-weight: 600; }
 .radio { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #b8bfcc; }
 .chip.selected .radio { border: 4px solid var(--blue); }
 
 .bar { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
 .bar span { display: block; height: 100%; background: var(--blue); border-radius: inherit; }
-.bar span.soft { background: #c9d4fb; }
 .row-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .row-between.wrap { flex-wrap: wrap; align-items: flex-end; }
 .panel { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 22px; display: grid; gap: 12px; align-content: start; }
 .panel.warn { background: var(--orange-soft); border-color: #f0dcae; }
 
-/* ---------- 진행 단계 ---------- */
+/* ---------- 공통 · 진행 단계 ---------- */
 .stepper { list-style: none; margin: 8px 0; padding: 0; display: flex; gap: 12px; flex-wrap: wrap; }
 .step { flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
 .step::after { content: ""; flex: 1; height: 1px; background: var(--line); }
@@ -104,7 +102,7 @@ button, input, select { font: inherit; color: inherit; }
 .step.current .step-label { color: var(--blue); font-weight: 600; }
 .step.current .step-dot, .step.done .step-dot { background: var(--blue); border-color: var(--blue); color: #fff; }
 
-/* ---------- 시작 페이지 ---------- */
+/* ---------- 시작 · 모드 선택 ---------- */
 .mode-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
 .mode-card { background: var(--gray); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: grid; gap: 16px; }
 .mode-card hr { border: 0; border-top: 1px solid var(--line); width: 100%; }
@@ -116,7 +114,7 @@ button, input, select { font: inherit; color: inherit; }
 .mode-notice strong { color: var(--blue); }
 .mode-notice p { color: var(--muted); }
 
-/* ---------- 입력 ---------- */
+/* ---------- 기본 입력 · 폼과 상권 검색 ---------- */
 .form-block { display: grid; gap: 10px; }
 .form-label { font-weight: 600; }
 .form-label.small { font-size: 14px; margin-top: 4px; }
@@ -131,7 +129,7 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .search-results button:hover { background: var(--blue-soft); }
 .search-results span { color: var(--muted); font-size: 13px; }
 
-/* ---------- 분석 중 ---------- */
+/* ---------- 분석 중 · 로딩 안내 ---------- */
 .spinner { width: 52px; height: 52px; border-radius: 50%; border: 4px solid var(--blue-soft); border-top-color: var(--blue); animation: spin 0.9s linear infinite; }
 .progress { width: min(560px, 100%); height: 6px; border-radius: 999px; background: var(--blue-soft); overflow: hidden; }
 .progress span { display: block; width: 40%; height: 100%; background: var(--blue); animation: slide 1.4s ease-in-out infinite; }
@@ -139,7 +137,7 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
 @media (prefers-reduced-motion: reduce) { .spinner, .progress span { animation: none; } }
 
-/* ---------- 요약 줄과 결과 ---------- */
+/* ---------- 요약 결과 · 점수와 핵심 인사이트 ---------- */
 .summary-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 16px 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
 .summary-code { font-size: 12px; color: var(--muted); }
 .summary-edit { margin-left: auto; color: var(--blue); font-size: 14px; font-weight: 600; }
@@ -157,7 +155,7 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .insight-tag.orange { background: var(--orange-soft); color: var(--orange); }
 .upsell { background: var(--gray); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 12px; }
 
-/* ---------- 입지 비교 표 ---------- */
+/* ---------- 보고서 · 입지 비교 표 ---------- */
 .table-scroll { overflow-x: auto; }
 .compare-table { width: 100%; min-width: 560px; border-collapse: separate; border-spacing: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
 .compare-table th, .compare-table td { padding: 12px 16px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -169,12 +167,12 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .compare-table tbody tr:last-child .is-base { border-radius: 0 0 10px 10px; }
 .compare-sub { display: block; margin-top: 2px; font-size: 12px; font-weight: 400; color: var(--muted); }
 
-/* ---------- 03 판매 방식 운영 점검 ---------- */
+/* ---------- 보고서 · 03 판매 방식 운영 점검 ---------- */
 .sales-check-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
 .sales-check-list li { display: grid; gap: 6px; padding: 14px 16px; background: var(--gray); border-radius: 10px; }
 .sales-check-list .tag { justify-self: start; }
 
-/* ---------- 추가 질문 ---------- */
+/* ---------- 추가 질문 · 진행도와 입력 폼 ---------- */
 .progress-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; display: grid; gap: 12px; font-size: 14px; }
 .question-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 28px; display: grid; gap: 30px; }
 .question { margin: 0; padding: 0; border: 0; display: grid; gap: 12px; }
@@ -190,14 +188,14 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .nav-buttons { display: flex; gap: 16px; }
 .nav-buttons .btn.ghost { min-width: 200px; }
 
-/* ---------- 결과 열기 팝업 ---------- */
+/* ---------- 결과 열기 · 확인 팝업 ---------- */
 .modal-backdrop { background: var(--gray); padding: 80px 24px; display: grid; place-items: center; min-height: 70vh; }
 .modal { width: min(860px, 100%); background: #fff; border-radius: 20px; padding: 44px; display: grid; gap: 18px; box-shadow: 0 20px 50px rgb(23 32 51 / 0.12); }
 .check-box { border: 1px solid var(--line); border-radius: 14px; padding: 22px; background: var(--gray); display: grid; gap: 12px; }
 .check-title { background: var(--blue-soft); color: var(--blue); font-weight: 700; padding: 12px 14px; border-radius: 8px; }
 .check-box ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
 
-/* ---------- 보고서 ---------- */
+/* ---------- 보고서 · 공통 레이아웃과 섹션 ---------- */
 .recap { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; padding: 18px 22px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; }
 .score-banner { display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: center; padding: 26px 30px; border-radius: 16px; background: var(--green-soft); color: var(--green); }
 .score-banner h2 { font-size: 22px; }
@@ -208,7 +206,7 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 .three-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
 .stat { font-size: 26px; font-weight: 700; color: var(--blue); }
-.fact-list, .criteria-list, .price-bars, .plain-list { margin: 0; padding: 0; list-style: none; display: grid; }
+.fact-list, .criteria-list, .plain-list { margin: 0; padding: 0; list-style: none; display: grid; }
 .fact-list li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .criteria-list li { display: grid; grid-template-columns: 160px 110px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; align-items: start; }
 @media (max-width: 640px) { .criteria-list li { grid-template-columns: 1fr; gap: 2px; } }
@@ -220,7 +218,6 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .source-tags { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
 .source-tags a, .source-tags span { display: inline-block; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--gray); color: var(--muted); font-size: 12px; }
 .source-tags a:hover { color: var(--blue); border-color: var(--blue); }
-.price-bars { gap: 14px; font-size: 14px; }
 .plain-list { gap: 4px; padding-left: 18px; list-style: disc; }
 .notice-box { background: var(--blue-soft); border-radius: 12px; padding: 22px; }
 
@@ -231,14 +228,14 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .bar-fill { width: 100%; background: #c9d4fb; }
 .bar-fill.selected { background: var(--blue); }
 
-/* ---------- 02 고객과 수요 세부 스타일 ---------- */
+/* ---------- 보고서 · 02 고객과 수요 ---------- */
 .demand-facts-panel .row-between { margin-bottom: 14px; }
 .demand-fact-cards { gap: 12px; }
 .demand-fact-card { background: var(--gray); padding: 12px 16px; border-radius: 8px; display: grid; gap: 4px; }
 .demand-fact-value { font-size: 16px; color: var(--text); }
 .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 
-/* ---------- 04 비용과 자본 ---------- */
+/* ---------- 보고서 · 04 비용과 자본 ---------- */
 .cost-notice { margin-top: 14px; }
 
 @media (max-width: 640px) {
@@ -248,7 +245,7 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
   .site-nav { gap: 16px; }
 }
 
-/* ---------- 점수 배너 근거 ---------- */
+/* ---------- 보고서 · 점수 배너 근거 ---------- */
 .score-banner-details { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding-top: 20px; border-top: 1px solid rgb(15 122 90 / 0.2); color: var(--text); }
 .score-basis-box { background: rgb(255 255 255 / 0.85); border-radius: 12px; padding: 16px 20px; display: grid; gap: 10px; align-content: start; }
 .score-basis-box h3 { font-size: 15px; color: var(--green); }
