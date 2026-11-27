@@ -25,7 +25,7 @@ export default function CostSection({ startupCapital, monthlyCapital }) {
               <strong>{PENDING_COST_ITEMS.join(' · ')}</strong>
             </li>
           </ul>
-          <p className="muted small" style={{ marginTop: '14px' }}>{COST_NOTICE}</p>
+          <p className="muted small cost-notice">{COST_NOTICE}</p>
         </div>
         <div className="panel warn">
           <p className="small">먼저 확인할 항목</p>

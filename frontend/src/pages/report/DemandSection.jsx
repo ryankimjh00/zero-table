@@ -44,7 +44,7 @@ export default function DemandSection({
 
       {/* 상권 수요 참고값: 3개의 독립된 미니 카드로 분리하여 명확한 구분 제공 */}
       <div className="panel demand-facts-panel">
-        <div className="row-between" style={{ marginBottom: '14px' }}>
+        <div className="row-between">
           <h3>상권 수요 참고값</h3>
           <RealBadge />
         </div>
@@ -123,19 +123,19 @@ export default function DemandSection({
 function BarChart({ slots, isSelected, emptyMessage }) {
   if (!slots || slots.length === 0) return <p className="muted">{emptyMessage}</p>
   return (
-    <div className="time-chart" style={{ gridTemplateColumns: `repeat(${slots.length}, 1fr)` }}>
+    <div className="bar-chart">
       {slots.map((s) => {
         const selected = isSelected ? isSelected(s) : false
         return (
-          <div key={s.key || s.label} className="time-bar">
-            <span className="time-value">{s.index}</span>
-            <div className="time-track">
+          <div key={s.key || s.label} className="bar-item">
+            <span className="bar-value">{s.index}</span>
+            <div className="bar-track">
               <div
-                className={selected ? 'time-fill selected' : 'time-fill'}
+                className={selected ? 'bar-fill selected' : 'bar-fill'}
                 style={{ height: `${s.index}%` }}
               />
             </div>
-            <span className="time-label">{s.label}</span>
+            <span>{s.label}</span>
           </div>
         )
       })}

@@ -224,18 +224,22 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .plain-list { gap: 4px; padding-left: 18px; list-style: disc; }
 .notice-box { background: var(--blue-soft); border-radius: 12px; padding: 22px; }
 
-.time-chart { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; height: 140px; }
-.time-bar { display: grid; grid-template-rows: auto 1fr auto; justify-items: center; gap: 4px; font-size: 12px; }
-.time-value { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 11px; }
-.time-track { width: 32px; display: flex; align-items: flex-end; background: var(--gray); border-radius: 6px; overflow: hidden; }
-.time-fill { width: 100%; background: #c9d4fb; }
-.time-fill.selected { background: var(--blue); }
+.bar-chart { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; height: 140px; }
+.bar-item { display: grid; grid-template-rows: auto 1fr auto; justify-items: center; gap: 4px; font-size: 12px; }
+.bar-value { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 11px; }
+.bar-track { width: 32px; display: flex; align-items: flex-end; background: var(--gray); border-radius: 6px; overflow: hidden; }
+.bar-fill { width: 100%; background: #c9d4fb; }
+.bar-fill.selected { background: var(--blue); }
 
 /* ---------- 02 고객과 수요 세부 스타일 ---------- */
+.demand-facts-panel .row-between { margin-bottom: 14px; }
 .demand-fact-cards { gap: 12px; }
 .demand-fact-card { background: var(--gray); padding: 12px 16px; border-radius: 8px; display: grid; gap: 4px; }
 .demand-fact-value { font-size: 16px; color: var(--text); }
 .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+
+/* ---------- 04 비용과 자본 ---------- */
+.cost-notice { margin-top: 14px; }
 
 @media (max-width: 640px) {
   .page { padding: 32px 16px 48px; }
