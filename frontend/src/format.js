@@ -1,3 +1,6 @@
+// 불러오다 실패한 자료의 칸에 쓰는 문구. 자료가 원래 없는 경우('자료 없음')와 구분한다.
+export const FAILED_TEXT = '불러오지 못함'
+
 // 숫자를 화면용 글자로 바꾸는 함수들. 값이 없으면 fallback(기본값: '자료 없음')으로 보여 준다.
 export function won(amount, fallback = '자료 없음') {
   if (amount === null || amount === undefined || amount === '') return fallback

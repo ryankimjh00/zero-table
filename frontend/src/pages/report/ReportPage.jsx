@@ -1,5 +1,6 @@
 import { Link, Navigate } from 'react-router-dom'
 import { useAnswers } from '../../state/answersContext.js'
+import { retryFailedFacts } from '../../api.js'
 import FlowStepper from '../../components/FlowStepper.jsx'
 import OutdatedNotice from '../../components/OutdatedNotice.jsx'
 import ReportHeader from './ReportHeader.jsx'
@@ -13,12 +14,18 @@ import ReportNotice from './ReportNotice.jsx'
 
 // 상세 분석 보고서. 서버 결과를 꺼내 구역마다 필요한 값만 넘긴다.
 export default function ReportPage() {
-  const { base: currentBase, answers: currentAnswers, detailResult, resetAll } = useAnswers()
+  const { base: currentBase, answers: currentAnswers, detailResult, setDetailResult, resetAll } = useAnswers()
   if (!detailResult) return <Navigate to="/questions/1" replace />
 
   // 보고서는 지금 입력이 아니라 분석한 순간의 입력(input)으로 그린다.
   const { assessment, facts, requestBody: plan, input } = detailResult
   const { base, answers } = input
+
+  // 불러오지 못한 상권 자료만 다시 받아 결과에 넣는다. 결과가 바뀌면 새로고침용 저장도 같이 바뀐다.
+  async function retryFacts() {
+    const retried = await retryFailedFacts(facts, plan.districtCode, plan.industryCode)
+    setDetailResult((prev) => ({ ...prev, facts: retried }))
+  }
 
   return (
     <div className="page wide">
@@ -43,9 +50,11 @@ export default function ReportPage() {
         currentDistrict={base.district}
         industryCode={base.industryCode}
         currentFacts={facts}
+        onRetryFacts={retryFacts}
       />
       <DemandSection
         facts={facts}
+        onRetryFacts={retryFacts}
         mainTime={answers.mainTime}
         ageGroup={answers.ageGroup}
         businessDays={answers.businessDays}
@@ -54,10 +63,8 @@ export default function ReportPage() {
         menuPrice={plan.strategy.menuPrice}
       />
       <CompetitionSection
-        sameIndustryStores={facts.sameIndustryStores}
-        franchiseStores={facts.franchiseStores}
-        openRate={facts.openRate}
-        closeRate={facts.closeRate}
+        facts={facts}
+        onRetryFacts={retryFacts}
         indicators={assessment.indicators}
         menuPrice={plan.strategy.menuPrice}
         salesModes={base.salesModes}

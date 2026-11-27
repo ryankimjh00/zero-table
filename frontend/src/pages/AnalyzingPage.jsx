@@ -11,11 +11,20 @@ export default function AnalyzingPage() {
   const navigate = useNavigate()
   const { base, answers, baseBody, detailBody, setSimpleResult, setDetailResult } = useAnswers()
   const [error, setError] = useState('')
+  // [다시 시도]를 누르면 숫자를 올려 아래 useEffect가 같은 조건으로 다시 요청하게 한다
+  const [attempt, setAttempt] = useState(0)
+
+  function retry() {
+    setError('')
+    setAttempt((n) => n + 1)
+  }
 
   useEffect(() => {
     let cancelled = false // 화면을 떠난 뒤 늦게 온 응답은 무시한다
     const body = isDetail ? detailBody() : baseBody()
 
+    // 상권 자료는 일부가 실패해도 결과에 실패 목록을 담아 돌아온다.
+    // 그래서 여기서 실패로 끝나는 경우는 점수 계산(assess)이 실패했을 때뿐이다.
     Promise.all([assess(body), loadDistrictFacts(body.districtCode, body.industryCode)])
       .then(([assessment, facts]) => {
         if (cancelled) return
@@ -37,9 +46,9 @@ export default function AnalyzingPage() {
     return () => {
       cancelled = true
     }
-    // 이 화면은 들어올 때 한 번만 요청하면 되므로 의존성을 모드로만 둔다.
+    // 들어올 때와 [다시 시도]를 눌렀을 때만 요청하면 되므로 의존성을 모드와 시도 횟수로만 둔다.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDetail])
+  }, [isDetail, attempt])
 
   return (
     <div className="page center-page">
@@ -47,7 +56,8 @@ export default function AnalyzingPage() {
         <>
           <h1 className="title">분석하지 못했어요.</h1>
           <p className="error">{error}</p>
-          <Link className="btn primary" to={isDetail ? '/questions/3' : '/input?mode=simple'}>조건 다시 보기</Link>
+          <button type="button" className="btn primary" onClick={retry}>다시 시도</button>
+          <Link className="text-link" to={isDetail ? '/questions/3' : '/input?mode=simple'}>조건 다시 보기</Link>
         </>
       ) : (
         <>

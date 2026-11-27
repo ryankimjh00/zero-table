@@ -4,9 +4,18 @@ const BASE_URL = 'https://webframework.monithub.org/api/v1'
 // 시안 기준 분기. 사용자에게 묻지 않고 고정한다.
 export const QUARTER = '20262'
 
+const CONNECTION_ERROR = '서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.'
+
 async function request(path, options) {
-  const response = await fetch(BASE_URL + path, options)
-  const data = await response.json()
+  // 연결 실패나 JSON이 아닌 응답은 브라우저 영어 메시지 대신 같은 안내 문구로 바꾼다
+  let response
+  let data
+  try {
+    response = await fetch(BASE_URL + path, options)
+    data = await response.json()
+  } catch {
+    throw new Error(CONNECTION_ERROR)
+  }
   if (!response.ok) throw new Error(data.message || '서버 요청에 실패했어요.')
   return data
 }
@@ -50,26 +59,71 @@ export function assess(body) {
   })
 }
 
-// 간단 결과와 보고서에 쓰는 상권 자료 묶음
-export async function loadDistrictFacts(districtCode, industryCode) {
-  const [sales, pedestrians, residents, stores] = await Promise.all([
-    firstRecord('seoul_estimated_sales', { districtCode, industryCode }),
-    firstRecord('seoul_pedestrian_population', { districtCode }),
-    firstRecord('seoul_resident_population', { districtCode }),
-    firstRecord('seoul_stores', { districtCode, industryCode }),
-  ])
-  return {
-    timeSlots: sales ? hourlySalesIndex(sales) : null,
-    ageSlots: sales ? ageSalesIndex(sales) : null,
-    daySlots: sales ? daySalesIndex(sales) : null,
-    quarterSales: sales?.THSMON_SELNG_AMT ?? null,
-    pedestrians: pedestrians?.TOT_FLPOP_CO ?? null,
-    residents: residents?.TOT_REPOP_CO ?? null,
-    sameIndustryStores: stores?.SIMILR_INDUTY_STOR_CO ?? null,
-    franchiseStores: stores?.FRC_STOR_CO ?? null,
-    openRate: stores?.OPBIZ_RT ?? null,
-    closeRate: stores?.CLSBIZ_RT ?? null,
-  }
+// 간단 결과와 보고서에 쓰는 상권 자료 4종.
+// dataset: 서버 자료 이름, withIndustry: 업종으로도 거르는지, toFacts: 화면에서 쓰는 값으로 바꾸는 방법
+const FACT_SOURCES = {
+  sales: {
+    dataset: 'seoul_estimated_sales',
+    withIndustry: true,
+    toFacts: (record) => ({
+      timeSlots: record ? hourlySalesIndex(record) : null,
+      ageSlots: record ? ageSalesIndex(record) : null,
+      daySlots: record ? daySalesIndex(record) : null,
+      quarterSales: record?.THSMON_SELNG_AMT ?? null,
+    }),
+  },
+  pedestrians: {
+    dataset: 'seoul_pedestrian_population',
+    withIndustry: false,
+    toFacts: (record) => ({ pedestrians: record?.TOT_FLPOP_CO ?? null }),
+  },
+  residents: {
+    dataset: 'seoul_resident_population',
+    withIndustry: false,
+    toFacts: (record) => ({ residents: record?.TOT_REPOP_CO ?? null }),
+  },
+  stores: {
+    dataset: 'seoul_stores',
+    withIndustry: true,
+    toFacts: (record) => ({
+      sameIndustryStores: record?.SIMILR_INDUTY_STOR_CO ?? null,
+      franchiseStores: record?.FRC_STOR_CO ?? null,
+      openRate: record?.OPBIZ_RT ?? null,
+      closeRate: record?.CLSBIZ_RT ?? null,
+    }),
+  },
+}
+
+// 안내 문구에 쓰는 자료 이름
+export const FACT_SOURCE_LABELS = { sales: '매출', pedestrians: '유동인구', residents: '상주인구', stores: '점포' }
+
+// 자료 4종을 따로 받는다. 하나가 실패해도 나머지는 쓰고, 실패한 자료 이름은 failedSources에 남긴다.
+// "자료가 원래 없음"(값 null)과 "불러오다 실패"(failedSources)를 화면에서 구분하기 위해서다.
+export async function loadDistrictFacts(districtCode, industryCode, sourceNames = Object.keys(FACT_SOURCES)) {
+  const outcomes = await Promise.allSettled(sourceNames.map((name) => {
+    const { dataset, withIndustry } = FACT_SOURCES[name]
+    return firstRecord(dataset, withIndustry ? { districtCode, industryCode } : { districtCode })
+  }))
+
+  const facts = { failedSources: [] }
+  outcomes.forEach((outcome, i) => {
+    const name = sourceNames[i]
+    const succeeded = outcome.status === 'fulfilled'
+    Object.assign(facts, FACT_SOURCES[name].toFacts(succeeded ? outcome.value : null))
+    if (!succeeded) facts.failedSources.push(name)
+  })
+  return facts
+}
+
+// 실패했던 자료만 다시 받아 기존 값에 덮어쓴다. 또 실패한 자료는 failedSources에 그대로 남는다.
+export async function retryFailedFacts(facts, districtCode, industryCode) {
+  const retried = await loadDistrictFacts(districtCode, industryCode, facts.failedSources ?? [])
+  return { ...facts, ...retried }
+}
+
+// 화면에서 "이 자료를 불러오다 실패했는지" 물을 때 쓴다. 예전에 저장된 결과에는 failedSources가 없다.
+export function isFactFailed(facts, sourceName) {
+  return facts?.failedSources?.includes(sourceName) ?? false
 }
 
 // 기준 상권 주변의 가까운 비교 상권 목록과 데이터 조회 (반경 2km 내외, 최대 3곳)
