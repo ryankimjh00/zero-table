@@ -1,10 +1,11 @@
+// 보고서 상단의 종합 점수와 반영 근거, 보류 항목 요약을 보여 준다.
 import { RealBadge } from '../../components/Badges.jsx'
 import { assessmentScore } from '../../format.js'
+import { criteriaOf } from './reportLabels.js'
 
-// 종합 점수와 점수 산출에 반영된 근거, 확인이 필요한 보류 항목 요약
 export default function ScoreBanner({ assessment }) {
   const score = assessmentScore(assessment)
-  const allCriteria = assessment.categories?.flatMap((c) => c.criteria ?? []) ?? []
+  const allCriteria = criteriaOf(assessment)
   const scoredCriteria = allCriteria.filter((item) => item.status === 'SCORED')
   const unconfirmedCriteria = allCriteria.filter((item) => item.score === null)
 
