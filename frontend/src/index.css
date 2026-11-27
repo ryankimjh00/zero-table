@@ -216,6 +216,10 @@ select { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
 .status { justify-self: start; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #eceff4; color: var(--muted); }
 .status.SCORED { background: var(--green-soft); color: var(--green); }
 .status.MISSING_ANSWER { background: var(--orange-soft); color: var(--orange); }
+.source-block { display: grid; gap: 8px; }
+.source-tags { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.source-tags a, .source-tags span { display: inline-block; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--gray); color: var(--muted); font-size: 12px; }
+.source-tags a:hover { color: var(--blue); border-color: var(--blue); }
 .price-bars { gap: 14px; font-size: 14px; }
 .plain-list { gap: 4px; padding-left: 18px; list-style: disc; }
 .notice-box { background: var(--blue-soft); border-radius: 12px; padding: 22px; }
