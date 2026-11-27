@@ -1,8 +1,8 @@
+// 상세 결과 열기 팝업과 광고 시청 후 분석 이동 흐름을 보여 준다.
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DummyBadge } from '../components/Badges.jsx'
 
-// 결과 열기 팝업. 광고·크레딧은 더미라서, 버튼을 누르면 잠깐 "광고 중"을 보여 준 뒤 바로 분석으로 넘어간다.
 export default function ResultOpenPage() {
   const navigate = useNavigate()
   const [watching, setWatching] = useState(false)

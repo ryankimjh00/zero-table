@@ -1,10 +1,10 @@
+// 보고서 상단의 제목, 저장·다운로드 버튼, 입력한 계획 요약을 보여 준다.
 import { useState } from 'react'
 import SummaryBar from '../../components/SummaryBar.jsx'
 import { won } from '../../format.js'
 import { labelOf } from './reportLabels.js'
 import { TOTAL_QUESTIONS } from '../../constants/questions.js'
 
-// 보고서 제목, 저장·다운로드 버튼, 입력한 계획 요약
 export default function ReportHeader({ base, answers, plan }) {
   const [notice, setNotice] = useState('')
   const { targetMonthlySales } = plan.demand

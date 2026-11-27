@@ -1,7 +1,7 @@
+// 보고서 05 항목별 평가와 영업 시간 대안, 자료 출처를 보여 준다.
 import { RealBadge } from '../../components/Badges.jsx'
 import { labelOf } from './reportLabels.js'
 
-// 보류 사유 코드 → 화면 문구
 const STATUS_LABEL = {
   SCORED: '계산됨',
   MISSING_ANSWER: '답변 미정',
@@ -10,7 +10,7 @@ const STATUS_LABEL = {
   PENDING_RULE: '기준 협의 중',
 }
 
-// 데이터셋 ID → 화면 이름. 원본 주소는 서버 응답의 sourceUrl을 쓴다.
+// 원본 주소는 서버 응답의 sourceUrl을 쓰므로 여기서는 화면 이름만 둔다.
 const DATASET_NAMES = {
   seoul_estimated_sales: '서울시 추정매출',
   seoul_stores: '서울시 점포',
@@ -20,13 +20,12 @@ const DATASET_NAMES = {
   seoul_commercial_districts: '서울시 상권영역',
 }
 
-// 분기 코드(예: '20262') → '2026년 2분기'
 function formatQuarter(quarter) {
   const code = String(quarter ?? '')
   return /^\d{5}$/.test(code) ? `${code.slice(0, 4)}년 ${code.slice(4)}분기` : null
 }
 
-// 자료마다 수집 시각이 조금씩 달라서, 가장 최근 날짜 하나만 'MM/DD'로 보여 준다
+// 자료마다 수집 시각이 조금씩 달라서 가장 최근 날짜 하나만 'MM/DD'로 보여 준다.
 function latestCollectedDate(sources) {
   const times = sources.map((s) => new Date(s.collectedAt).getTime()).filter((t) => !Number.isNaN(t))
   if (times.length === 0) return null
@@ -34,7 +33,6 @@ function latestCollectedDate(sources) {
   return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`
 }
 
-// 05 항목별 평가, 영업 시간 대안, 자료 출처
 export default function CriteriaSection({ assessment, quarter }) {
   const sources = assessment.sources ?? []
   const quarterLabel = formatQuarter(quarter)
