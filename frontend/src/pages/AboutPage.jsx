@@ -1,7 +1,7 @@
+// 서비스 소개와 실제 구현·더미 기능 안내 화면을 보여 준다.
 import { Link } from 'react-router-dom'
 import { DummyBadge } from '../components/Badges.jsx'
 
-// 서비스 소개 (더미). 시안에 화면이 없어 프로토타입 안내로 대신한다.
 export default function AboutPage() {
   return (
     <div className="page narrow">

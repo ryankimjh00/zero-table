@@ -1,7 +1,6 @@
+// 여러 화면에서 입력한 답변 상태를 함께 공유하기 위한 컨텍스트를 정의한다.
 import { createContext, useContext } from 'react'
 
-// 여러 화면이 같은 답변을 함께 쓰기 위한 공용 보관함.
-// 1단계에서 고른 답이 3단계와 보고서까지 그대로 남아 있는 이유가 이것이다.
 export const AnswersContext = createContext(null)
 
 export function useAnswers() {

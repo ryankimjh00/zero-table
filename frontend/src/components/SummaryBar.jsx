@@ -1,8 +1,8 @@
+// 선택한 업종·상권·판매 방식 요약과 기본 정보 수정 링크를 보여 준다.
 import { Link } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
 import { INDUSTRIES } from '../constants/industries.js'
 
-// "수제버거 · 서울 성수동 · 포장 | 기본 정보 수정" 줄
 export default function SummaryBar({ editTo = '/input?mode=detail' }) {
   const { base } = useAnswers()
   const industry = INDUSTRIES.find((i) => i.code === base.industryCode)

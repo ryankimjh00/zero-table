@@ -1,7 +1,6 @@
+// 숫자 입력칸과 '미정' 체크박스를 함께 보여 주고 미정 선택 시 값을 null로 저장한다.
 import { useAnswers } from '../state/answersContext.js'
 
-// 숫자 입력 질문. 칸이 1~2개이고 오른쪽에 '미정' 체크박스가 있다.
-// 미정이면 값을 null로 저장하고 입력칸을 잠근다.
 export default function NumberQuestion({ question }) {
   const { answers, setAnswer } = useAnswers()
   const undecided = question.fields.every((f) => answers[f.key] === null)

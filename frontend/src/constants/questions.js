@@ -1,7 +1,6 @@
-// 추가 질문 3단계로 나눈 데이터.
-// 화면은 이 데이터를 읽어서 그리기만 하므로, 질문을 바꿀 때는 이 파일만 고치면 된다.
-// choice: 버튼 선택형, number: 숫자 입력형(fields가 2개면 한 줄에 칸 2개)
-// multiplier: 화면 단위를 서버 단위로 바꾸는 값 (만 원 → 원은 10000)
+// 추가 질문 단계별 문항과 기본 응답값을 정의한다.
+// 화면은 이 데이터를 읽어 그리므로 질문을 바꿀 때는 이 파일만 고친다.
+// multiplier는 만 원 등 화면 단위를 서버 원 단위로 바꾸기 위해 곱하는 값이다.
 
 const UNDECIDED = { value: 'UNDECIDED', label: '미정' }
 
@@ -123,17 +122,15 @@ export const QUESTION_STEPS = [
   },
 ]
 
-// 전체 추가 질문 개수
 export const TOTAL_QUESTIONS = QUESTION_STEPS.reduce((sum, step) => sum + step.questions.length, 0)
 
-// 모든 숫자 입력칸 정보 (서버 형식으로 바꿀 때 쓴다)
+// 서버 전송 시 화면 단위를 변환하기 위해 모든 숫자 입력칸 정보를 모은다.
 export const NUMBER_FIELDS = QUESTION_STEPS
   .flatMap((step) => step.questions)
   .filter((q) => q.type === 'number')
   .flatMap((q) => q.fields)
 
-// 처음 화면에 채워 둘 값. 시안 예시와 같게 해서 바로 흐름을 시험할 수 있게 한다.
-// 숫자는 화면 단위(만 원 등) 그대로이고, null은 '미정'이다.
+// 처음 화면에 채워 둘 기본 응답값으로, 숫자는 화면 단위 그대로 두고 null은 '미정'을 뜻한다.
 export const DEFAULT_ANSWERS = {
   customerType: 'WORKER',
   ageGroup: 'THIRTIES',
