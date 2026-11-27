@@ -49,7 +49,7 @@ export const QUESTION_STEPS = [
         ],
       },
       {
-        type: 'choice', key: 'canAdjustHours', title: '영업 요일과 시간대를 조정할 수 있나요?',
+        type: 'choice', key: 'canAdjustHours', title: '영업 시간대를 조정할 수 있나요?',
         options: [
           { value: 'YES', label: '가능' }, { value: 'NO', label: '불가' }, UNDECIDED,
         ],

@@ -23,10 +23,13 @@ export default function DemandSection({
     ? `월 ${monthlyOperatingDays}일 영업`
     : `월 ${DEFAULT_OPERATING_DAYS}일 영업 가정`
 
-  // 목표 매출 또는 메뉴 가격이 입력되지 않았으면 주문 수 계산 불가 -> '미입력' 표시
+  // 목표 매출이나 메뉴 가격이 없으면 판매량을 계산할 수 없어 '미입력'으로 표시한다.
+  // 반올림하면 목표에 조금 못 미칠 수 있어 올림한다.
   const hasSalesAndPrice = Boolean(targetMonthlySales && menuPrice)
-  const monthlyOrders = hasSalesAndPrice ? targetMonthlySales / menuPrice : null
-  const dailyOrders = monthlyOrders ? monthlyOrders / operatingDays : null
+  const monthlySalesQuantity = hasSalesAndPrice ? Math.ceil(targetMonthlySales / menuPrice) : null
+  const dailySalesQuantity = hasSalesAndPrice
+    ? Math.ceil(targetMonthlySales / menuPrice / operatingDays)
+    : null
 
   // 영업 요일 선택에 따른 요일 강조 여부 판정
   const isDaySelected = (slot) => {
@@ -101,20 +104,21 @@ export default function DemandSection({
           <p className="stat">{won(targetMonthlySales, '미입력')}</p>
         </div>
         <div className="panel">
-          <p className="muted small">필요한 월 주문 수</p>
+          <p className="muted small">대표 메뉴 기준 필요 판매량 (월)</p>
           <p className="stat">
-            {hasSalesAndPrice ? `약 ${Math.round(monthlyOrders).toLocaleString()}건` : '미입력'}
+            {hasSalesAndPrice ? `${monthlySalesQuantity.toLocaleString()}개` : '미입력'}
           </p>
-          <p className="muted small">목표 ÷ 메뉴 가격 (1주문 1메뉴 가정)</p>
+          <p className="muted small">목표 매출 ÷ 대표 메뉴 가격</p>
         </div>
         <div className="panel">
-          <p className="muted small">하루 필요한 주문 수</p>
+          <p className="muted small">대표 메뉴 기준 필요 판매량 (하루)</p>
           <p className="stat">
-            {hasSalesAndPrice ? `약 ${Math.round(dailyOrders).toLocaleString()}건` : '미입력'}
+            {hasSalesAndPrice ? `${dailySalesQuantity.toLocaleString()}개` : '미입력'}
           </p>
           <p className="muted small">{operatingDaysLabel}</p>
         </div>
       </div>
+      <p className="muted small">추가 메뉴·주류·할인은 반영하지 않은 값이에요.</p>
     </section>
   )
 }
