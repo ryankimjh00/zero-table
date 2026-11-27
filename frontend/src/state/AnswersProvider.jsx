@@ -47,12 +47,18 @@ function toDetailBody(base, answers) {
     const value = Number(raw) * (field.multiplier ?? 1)
     n[field.key] = field.integer ? Math.round(value) : value
   }
+  const canAdjustHours =
+    answers.canAdjustHours === 'YES' ? true : answers.canAdjustHours === 'NO' ? false : null
+
   return {
     ...toBaseBody(base),
     customer: { type: answers.customerType, ageGroup: answers.ageGroup, visitPurpose: answers.visitPurpose },
-    schedule: { businessDays: answers.businessDays, mainTime: answers.mainTime },
-    demand: { targetMonthlySales: n.targetMonthlySales,monthlyOperatingDays: n.monthlyOperatingDays,
-      expectedDailyTeams: n.expectedDailyTeams, },
+    schedule: { businessDays: answers.businessDays, mainTime: answers.mainTime, canAdjustHours },
+    demand: {
+      targetMonthlySales: n.targetMonthlySales,
+      monthlyOperatingDays: n.monthlyOperatingDays,
+      expectedDailyTeams: n.expectedDailyTeams,
+    },
     strategy: {
       menuPrice: n.menuPrice, areaPyeong: n.areaPyeong, seatCount: n.seatCount, tableCount: n.tableCount,
       dailyTurns: n.dailyTurns, startupCapital: n.startupCapital, monthlyCapital: n.monthlyCapital,
