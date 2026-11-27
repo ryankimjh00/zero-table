@@ -1,6 +1,6 @@
+// 보고서 화면에서 쓰는 선택지 라벨 변환과 평가 항목 추출을 담당한다.
 import { QUESTION_STEPS } from '../../constants/questions.js'
 
-// 질문 선택지 값 → 화면 글자 (예: WORKER → 직장인)
 export function labelOf(key, value) {
   for (const step of QUESTION_STEPS) {
     const q = step.questions.find((item) => item.key === key)
@@ -8,4 +8,8 @@ export function labelOf(key, value) {
     if (option) return option.label
   }
   return '미정'
+}
+
+export function criteriaOf(assessment) {
+  return assessment?.categories?.flatMap((category) => category.criteria ?? []) ?? []
 }
