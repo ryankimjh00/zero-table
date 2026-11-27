@@ -2,17 +2,22 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
 import { assess, loadDistrictFacts } from '../api.js'
+import {
+  inputPath, isDetailMode, LAST_QUESTION_STEP, questionsPath, REPORT_PATH, SIMPLE_MODE, SIMPLE_RESULT_PATH,
+} from '../constants/routes.js'
 
 // 분석 중: 서버에 요청을 보내고, 응답이 오면 결과 화면으로 넘어간다.
-// mode=simple은 기본 정보만, mode=detail은 14개 답변까지 보낸다.
+// 간단 분석은 기본 정보만, 상세 분석은 추가 질문 답변까지 보낸다.
 export default function AnalyzingPage() {
   const [params] = useSearchParams()
-  const isDetail = params.get('mode') === 'detail'
+  const isDetail = isDetailMode(params)
   const navigate = useNavigate()
   const { base, answers, baseBody, detailBody, setSimpleResult, setDetailResult } = useAnswers()
   const [error, setError] = useState('')
   // [다시 시도]를 누르면 숫자를 올려 아래 useEffect가 같은 조건으로 다시 요청하게 한다
   const [attempt, setAttempt] = useState(0)
+  // 오류가 나거나 분석을 멈출 때 돌아갈 입력 화면
+  const editPath = isDetail ? questionsPath(LAST_QUESTION_STEP) : inputPath(SIMPLE_MODE)
 
   function retry() {
     setError('')
@@ -33,10 +38,10 @@ export default function AnalyzingPage() {
         const result = { assessment, facts, requestBody: body, input }
         if (isDetail) {
           setDetailResult(result)
-          navigate('/report', { replace: true })
+          navigate(REPORT_PATH, { replace: true })
         } else {
           setSimpleResult(result)
-          navigate('/result', { replace: true })
+          navigate(SIMPLE_RESULT_PATH, { replace: true })
         }
       })
       .catch((e) => {
@@ -57,7 +62,7 @@ export default function AnalyzingPage() {
           <h1 className="title">분석하지 못했어요.</h1>
           <p className="error">{error}</p>
           <button type="button" className="btn primary" onClick={retry}>다시 시도</button>
-          <Link className="text-link" to={isDetail ? '/questions/3' : '/input?mode=simple'}>조건 다시 보기</Link>
+          <Link className="text-link" to={editPath}>조건 다시 보기</Link>
         </>
       ) : (
         <>
@@ -68,7 +73,7 @@ export default function AnalyzingPage() {
           </p>
           <div className="progress"><span /></div>
           <button type="button" className="btn primary" disabled>분석 중</button>
-          <Link className="text-link" to={isDetail ? '/questions/3' : '/input?mode=simple'}>조건 다시 보기</Link>
+          <Link className="text-link" to={editPath}>조건 다시 보기</Link>
         </>
       )}
     </div>

@@ -2,9 +2,10 @@
 import { Link } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
 import { INDUSTRIES } from '../constants/industries.js'
+import { DETAIL_MODE, inputPath } from '../constants/routes.js'
 
 // 결과 화면은 분석할 때 입력(analyzedBase)을 넘기고, 입력 화면은 넘기지 않아 지금 입력을 보여 준다.
-export default function SummaryBar({ analyzedBase, editTo = '/input?mode=detail' }) {
+export default function SummaryBar({ analyzedBase, editTo = inputPath(DETAIL_MODE) }) {
   const { base: currentBase } = useAnswers()
   const base = analyzedBase ?? currentBase
 

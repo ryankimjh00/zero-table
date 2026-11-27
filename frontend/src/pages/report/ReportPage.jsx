@@ -1,6 +1,7 @@
 import { Link, Navigate } from 'react-router-dom'
 import { useAnswers } from '../../state/answersContext.js'
 import { retryFailedFacts } from '../../api.js'
+import { analyzingPath, DETAIL_MODE, questionsPath, START_PATH } from '../../constants/routes.js'
 import FlowStepper from '../../components/FlowStepper.jsx'
 import OutdatedNotice from '../../components/OutdatedNotice.jsx'
 import ReportHeader from './ReportHeader.jsx'
@@ -15,7 +16,7 @@ import ReportNotice from './ReportNotice.jsx'
 // 상세 분석 보고서. 서버 결과를 꺼내 구역마다 필요한 값만 넘긴다.
 export default function ReportPage() {
   const { base: currentBase, answers: currentAnswers, detailResult, setDetailResult, resetAll } = useAnswers()
-  if (!detailResult) return <Navigate to="/questions/1" replace />
+  if (!detailResult) return <Navigate to={questionsPath(1)} replace />
 
   // 보고서는 지금 입력이 아니라 분석한 순간의 입력(input)으로 그린다.
   const { assessment, facts, requestBody: plan, input } = detailResult
@@ -33,7 +34,7 @@ export default function ReportPage() {
       <OutdatedNotice
         analyzedInput={input}
         currentInput={{ base: currentBase, answers: currentAnswers }}
-        retryTo="/analyzing?mode=detail"
+        retryTo={analyzingPath(DETAIL_MODE)}
       />
       <ReportHeader base={base} answers={answers} plan={plan} />
       <ScoreBanner assessment={assessment} />
@@ -77,8 +78,8 @@ export default function ReportPage() {
       <ReportNotice assessment={assessment} />
 
       <div className="row-between wrap">
-        <Link className="text-link" to="/questions/1">← 추가 질문 답변 수정하기</Link>
-        <Link className="btn ghost" to="/" onClick={resetAll}>새 아이디어 분석</Link>
+        <Link className="text-link" to={questionsPath(1)}>← 추가 질문 답변 수정하기</Link>
+        <Link className="btn ghost" to={START_PATH} onClick={resetAll}>새 아이디어 분석</Link>
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
 // 서비스 소개와 실제 구현·더미 기능 안내 화면을 보여 준다.
 import { Link } from 'react-router-dom'
+import { START_PATH } from '../constants/routes.js'
 import { DummyBadge } from '../components/Badges.jsx'
 
 export default function AboutPage() {
@@ -20,7 +21,7 @@ export default function AboutPage() {
           <li>입지 비교 점수, 가격 비교, 자본 배분</li>
         </ul>
       </div>
-      <Link className="btn primary" to="/">분석 시작하기</Link>
+      <Link className="btn primary" to={START_PATH}>분석 시작하기</Link>
     </div>
   )
 }

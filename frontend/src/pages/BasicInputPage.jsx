@@ -7,11 +7,12 @@ import DistrictSearch from '../components/DistrictSearch.jsx'
 import FlowStepper from '../components/FlowStepper.jsx'
 import { DETAIL_STEPS } from '../constants/flow.js'
 import { RealBadge } from '../components/Badges.jsx'
+import { analyzingPath, isDetailMode, questionsPath, SIMPLE_MODE } from '../constants/routes.js'
 
 // 기본 입력: 간단 분석(mode=simple)과 상세 분석(mode=detail)이 같은 화면을 쓰고 버튼만 다르다.
 export default function BasicInputPage() {
   const [params] = useSearchParams()
-  const isDetail = params.get('mode') === 'detail'
+  const isDetail = isDetailMode(params)
   const navigate = useNavigate()
   const { base, setBase } = useAnswers()
   const [error, setError] = useState('')
@@ -33,7 +34,7 @@ export default function BasicInputPage() {
       setError('업종과 동네를 모두 골라 주세요.')
       return
     }
-    navigate(isDetail ? '/questions/1' : '/analyzing?mode=simple')
+    navigate(isDetail ? questionsPath(1) : analyzingPath(SIMPLE_MODE))
   }
 
   return (

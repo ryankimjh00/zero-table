@@ -6,6 +6,7 @@ import ChoiceChips from '../components/ChoiceChips.jsx'
 import NumberQuestion from '../components/NumberQuestion.jsx'
 import SummaryBar from '../components/SummaryBar.jsx'
 import FlowStepper from '../components/FlowStepper.jsx'
+import { questionsPath, RESULT_OPEN_PATH, SIMPLE_RESULT_PATH } from '../constants/routes.js'
 
 export default function QuestionsPage() {
   const step = Number(useParams().step)
@@ -13,7 +14,7 @@ export default function QuestionsPage() {
   const { answers, setAnswer } = useAnswers()
 
   const data = QUESTION_STEPS[step - 1]
-  if (!data) return <Navigate to="/questions/1" replace />
+  if (!data) return <Navigate to={questionsPath(1)} replace />
 
   const totalSteps = QUESTION_STEPS.length
   // 앞 단계까지의 질문 수를 더해 이번 단계 질문 번호를 이어서 매긴다.
@@ -22,10 +23,10 @@ export default function QuestionsPage() {
   const isLast = step === totalSteps
 
   function goNext() {
-    navigate(isLast ? '/open' : `/questions/${step + 1}`)
+    navigate(isLast ? RESULT_OPEN_PATH : questionsPath(step + 1))
   }
   function goPrev() {
-    navigate(step === 1 ? '/result' : `/questions/${step - 1}`)
+    navigate(step === 1 ? SIMPLE_RESULT_PATH : questionsPath(step - 1))
   }
 
   return (

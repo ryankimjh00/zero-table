@@ -8,10 +8,12 @@ import FactsRetryNotice from '../components/FactsRetryNotice.jsx'
 import { isFactFailed, retryFailedFacts } from '../api.js'
 import { assessmentScore, count, FAILED_TEXT, won } from '../format.js'
 import { TOTAL_QUESTIONS } from '../constants/questions.js'
+import { analyzingPath, inputPath, questionsPath, SIMPLE_MODE } from '../constants/routes.js'
 
+// 간단 분석 결과: 점수, 수요·경쟁·비용 요약 카드, 상세 분석 안내를 보여 준다.
 export default function SimpleResultPage() {
   const { base: currentBase, simpleResult, setSimpleResult } = useAnswers()
-  if (!simpleResult) return <Navigate to="/input?mode=simple" replace />
+  if (!simpleResult) return <Navigate to={inputPath(SIMPLE_MODE)} replace />
 
   // 결과 문장은 분석한 순간의 기본 입력으로 쓴다.
   const { assessment, facts, input, requestBody } = simpleResult
@@ -48,14 +50,14 @@ export default function SimpleResultPage() {
       <OutdatedNotice
         analyzedInput={input}
         currentInput={{ base: currentBase }}
-        retryTo="/analyzing?mode=simple"
+        retryTo={analyzingPath(SIMPLE_MODE)}
       />
       <span className="pill">간단 분석 결과 · 무료 · 광고 없음</span>
       <p className="muted small">음식·지역·판매 방식 기준의 간단 분석이에요. 예산과 운영 계획은 아직 반영하지 않았어요.</p>
       <h1 className="title">
         {base.district?.name}에서 {base.food}, {score >= 70 ? '시작해볼 만해요.' : '조건을 더 살펴봐야 해요.'}
       </h1>
-      <SummaryBar analyzedBase={base} editTo="/input?mode=simple" />
+      <SummaryBar analyzedBase={base} editTo={inputPath(SIMPLE_MODE)} />
 
       <FactsRetryNotice
         facts={facts}
@@ -99,7 +101,7 @@ export default function SimpleResultPage() {
         </div>
         <p>5개 영역에 답하면 내 조건별 적합도를 확인해요. 입력한 음식·지역·판매 방식은 그대로 이어가요.</p>
         <p className="accent small">질문 완료 후 광고를 보고 크레딧을 받아 이번 상세 결과와 보고서를 함께 열 수 있어요.</p>
-        <Link className="btn primary block" to="/questions/1">내 조건으로 상세 분석하기 →</Link>
+        <Link className="btn primary block" to={questionsPath(1)}>내 조건으로 상세 분석하기 →</Link>
         <p className="muted small center">추가 질문 {TOTAL_QUESTIONS}개 (3단계) → 광고 크레딧으로 결과 열기 → 상세 분석</p>
       </section>
 
