@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnswersContext } from './answersContext.js'
 import { DEFAULT_ANSWERS, NUMBER_FIELDS } from '../constants/questions.js'
 import { QUARTER } from '../api.js'
 
-// 기본 입력 예시값: 시안의 "수제버거 · 서울 성수동 · 포장"에 가장 가까운 실제 코드
+// 첫 화면에 미리 채워 두는 예시 입력 (성수역 · 수제버거 · 포장)
 const DEFAULT_BASE = {
   food: '수제버거',
   industryCode: 'CS100006',
@@ -11,23 +11,56 @@ const DEFAULT_BASE = {
   salesModes: ['포장'],
 }
 
+// 새로고침해도 입력과 결과가 남도록 sessionStorage에 저장한다. 탭을 닫으면 지워진다.
+const STORAGE_KEY = 'zero-table'
+// 저장 형식이 바뀌면 숫자를 올린다. 버전이 다른 옛 값은 버리고 기본값으로 시작한다.
+const STORAGE_VERSION = 1
+
+// 화면 답 → 서버 값. '미정'은 표에 없어서 null이 된다.
+const CAN_ADJUST_HOURS_VALUES = { YES: true, NO: false }
+
 export default function AnswersProvider({ children }) {
-  const [base, setBase] = useState(DEFAULT_BASE) // 음식·동네·판매 방식
-  const [answers, setAnswers] = useState(DEFAULT_ANSWERS) // 추가 질문 응답
-  const [simpleResult, setSimpleResult] = useState(null) // 간단 분석 결과
-  const [detailResult, setDetailResult] = useState(null) // 상세 분석 결과
+  const [saved] = useState(readSaved)
+  const [base, setBase] = useState(saved?.base ?? DEFAULT_BASE) // 음식·동네·판매 방식
+  const [answers, setAnswers] = useState(saved?.answers ?? DEFAULT_ANSWERS) // 추가 질문 응답
+  const [simpleResult, setSimpleResult] = useState(saved?.simpleResult ?? null) // 간단 분석 결과
+  const [detailResult, setDetailResult] = useState(saved?.detailResult ?? null) // 상세 분석 결과
+
+  useEffect(() => {
+    const data = { version: STORAGE_VERSION, base, answers, simpleResult, detailResult }
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  }, [base, answers, simpleResult, detailResult])
 
   function setAnswer(key, value) {
     setAnswers((prev) => ({ ...prev, [key]: value }))
   }
 
+  // "새 아이디어 분석": 입력과 결과를 모두 처음 상태로 되돌린다.
+  function resetAll() {
+    setBase(DEFAULT_BASE)
+    setAnswers(DEFAULT_ANSWERS)
+    setSimpleResult(null)
+    setDetailResult(null)
+  }
+
   const value = {
     base, setBase, answers, setAnswer,
     simpleResult, setSimpleResult, detailResult, setDetailResult,
+    resetAll,
     baseBody: () => toBaseBody(base),
     detailBody: () => toDetailBody(base, answers),
   }
   return <AnswersContext.Provider value={value}>{children}</AnswersContext.Provider>
+}
+
+// 저장된 값이 없거나, 버전이 다르거나, 읽다가 깨지면 null을 돌려 기본값으로 시작하게 한다.
+function readSaved() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY))
+    return saved?.version === STORAGE_VERSION ? saved : null
+  } catch {
+    return null
+  }
 }
 
 // 서버가 반드시 요구하는 세 값. 판매 방식은 API에 없는 항목이라 보내지 않는다.
@@ -47,8 +80,7 @@ function toDetailBody(base, answers) {
     const value = Number(raw) * (field.multiplier ?? 1)
     n[field.key] = field.integer ? Math.round(value) : value
   }
-  const canAdjustHours =
-    answers.canAdjustHours === 'YES' ? true : answers.canAdjustHours === 'NO' ? false : null
+  const canAdjustHours = CAN_ADJUST_HOURS_VALUES[answers.canAdjustHours] ?? null
 
   return {
     ...toBaseBody(base),

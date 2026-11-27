@@ -25,7 +25,7 @@ export default function ReportHeader({ base, answers, plan }) {
       </div>
       {notice && <p className="dummy-banner inline">{notice}</p>}
 
-      <SummaryBar />
+      <SummaryBar analyzedBase={base} />
       <div className="recap">
         <div><p className="muted small">고객 · 판매 계획</p>
           <strong>{labelOf('customerType', answers.customerType)} / {labelOf('ageGroup', answers.ageGroup)} / {labelOf('visitPurpose', answers.visitPurpose)}</strong>

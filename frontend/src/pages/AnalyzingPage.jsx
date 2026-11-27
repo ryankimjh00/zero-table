@@ -9,7 +9,7 @@ export default function AnalyzingPage() {
   const [params] = useSearchParams()
   const isDetail = params.get('mode') === 'detail'
   const navigate = useNavigate()
-  const { base, baseBody, detailBody, setSimpleResult, setDetailResult } = useAnswers()
+  const { base, answers, baseBody, detailBody, setSimpleResult, setDetailResult } = useAnswers()
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -19,7 +19,9 @@ export default function AnalyzingPage() {
     Promise.all([assess(body), loadDistrictFacts(body.districtCode, body.industryCode)])
       .then(([assessment, facts]) => {
         if (cancelled) return
-        const result = { assessment, facts, requestBody: body }
+        // 결과 화면은 분석한 순간의 입력(input)만 읽는다. 간단 분석은 기본 입력만 쓴다.
+        const input = isDetail ? { base, answers } : { base }
+        const result = { assessment, facts, requestBody: body, input }
         if (isDetail) {
           setDetailResult(result)
           navigate('/report', { replace: true })

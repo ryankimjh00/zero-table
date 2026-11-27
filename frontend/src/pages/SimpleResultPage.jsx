@@ -2,15 +2,18 @@ import { Link, Navigate } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
 import SummaryBar from '../components/SummaryBar.jsx'
 import FlowStepper from '../components/FlowStepper.jsx'
+import OutdatedNotice from '../components/OutdatedNotice.jsx'
 import { RealBadge } from '../components/Badges.jsx'
 import { assessmentScore, count, won } from '../format.js'
 import { TOTAL_QUESTIONS } from '../constants/questions.js'
 
 export default function SimpleResultPage() {
-  const { base, simpleResult } = useAnswers()
+  const { base: currentBase, simpleResult } = useAnswers()
   if (!simpleResult) return <Navigate to="/input?mode=simple" replace />
 
-  const { assessment, facts } = simpleResult
+  // 결과 문장은 분석한 순간의 기본 입력으로 쓴다.
+  const { assessment, facts, input } = simpleResult
+  const { base } = input
   const score = assessmentScore(assessment)
 
   const cards = [
@@ -33,12 +36,17 @@ export default function SimpleResultPage() {
 
   return (
     <div className="page">
+      <OutdatedNotice
+        analyzedInput={input}
+        currentInput={{ base: currentBase }}
+        retryTo="/analyzing?mode=simple"
+      />
       <span className="pill">간단 분석 결과 · 무료 · 광고 없음</span>
       <p className="muted small">음식·지역·판매 방식 기준의 간단 분석이에요. 예산과 운영 계획은 아직 반영하지 않았어요.</p>
       <h1 className="title">
         {base.district?.name}에서 {base.food}, {score >= 70 ? '시작해볼 만해요.' : '조건을 더 살펴봐야 해요.'}
       </h1>
-      <SummaryBar editTo="/input?mode=simple" />
+      <SummaryBar analyzedBase={base} editTo="/input?mode=simple" />
 
       <div className="result-grid">
         <section className="score-card">
