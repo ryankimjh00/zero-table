@@ -1,7 +1,7 @@
+// 시작 화면: 간단 분석과 상세 분석 중 하나를 고른다.
 import { Link } from 'react-router-dom'
 import { DETAIL_MODE, inputPath, SIMPLE_MODE } from '../constants/routes.js'
 
-// 시작 페이지: 간단 분석과 상세 분석 중 하나를 고른다.
 const MODES = [
   {
     mode: SIMPLE_MODE,

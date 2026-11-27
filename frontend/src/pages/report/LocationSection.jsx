@@ -1,3 +1,4 @@
+// 보고서 01 입지 비교: 기준 상권과 가장 가까운 상권 3곳을 같은 업종 기준으로 비교한다.
 import { useEffect, useState } from 'react'
 import { isFactFailed, loadNearbyDistrictsComparison, retryFailedFacts } from '../../api.js'
 import { RealBadge } from '../../components/Badges.jsx'
@@ -22,7 +23,6 @@ function formatDistance(meters) {
   return `${meters}m`
 }
 
-// 01 입지 비교: 기준 상권과 가장 가까운 주변 상권 3곳(반경 2km 내외)을 같은 업종 기준으로 비교
 export default function LocationSection({ currentDistrict, industryCode, currentFacts, onRetryFacts }) {
   const [nearby, setNearby] = useState([])
   const [status, setStatus] = useState('loading')

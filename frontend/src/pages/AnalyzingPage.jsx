@@ -1,3 +1,5 @@
+// 분석 중: 서버에 요청을 보내고, 응답이 오면 결과 화면으로 넘어간다.
+// 간단 분석은 기본 정보만, 상세 분석은 추가 질문 답변까지 보낸다.
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
@@ -6,8 +8,6 @@ import {
   inputPath, isDetailMode, LAST_QUESTION_STEP, questionsPath, REPORT_PATH, SIMPLE_MODE, SIMPLE_RESULT_PATH,
 } from '../constants/routes.js'
 
-// 분석 중: 서버에 요청을 보내고, 응답이 오면 결과 화면으로 넘어간다.
-// 간단 분석은 기본 정보만, 상세 분석은 추가 질문 답변까지 보낸다.
 export default function AnalyzingPage() {
   const [params] = useSearchParams()
   const isDetail = isDetailMode(params)

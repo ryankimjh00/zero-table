@@ -1,3 +1,4 @@
+// 보고서 02 고객과 수요: 상권 수요 참고값, 매출 지수 그래프, 목표 매출에 필요한 판매량.
 import { RealBadge } from '../../components/Badges.jsx'
 import FactsRetryNotice from '../../components/FactsRetryNotice.jsx'
 import { isFactFailed } from '../../api.js'
@@ -7,7 +8,6 @@ import { labelOf } from './reportLabels.js'
 // 한 달 영업일 기본 가정값. 입력값이 없을 때 사용한다.
 const DEFAULT_OPERATING_DAYS = 22
 
-// 02 고객과 수요
 export default function DemandSection({
   facts,
   onRetryFacts,
@@ -20,7 +20,6 @@ export default function DemandSection({
 }) {
   const mainTimeLabel = labelOf('mainTime', mainTime)
 
-  // 영업일 수: 입력값이 있으면 사용하고 없으면 기본 22일 가정
   const operatingDays = monthlyOperatingDays || DEFAULT_OPERATING_DAYS
   const operatingDaysLabel = monthlyOperatingDays
     ? `월 ${monthlyOperatingDays}일 영업`
@@ -34,7 +33,7 @@ export default function DemandSection({
     ? Math.ceil(targetMonthlySales / menuPrice / operatingDays)
     : null
 
-  // 영업 요일 선택에 따른 요일 강조 여부 판정
+  // 고른 영업 요일(평일·주말·매일)에 들어가는 요일 막대를 진하게 칠한다
   const isDaySelected = (slot) => {
     if (!businessDays || businessDays === 'UNDECIDED') return false
     if (businessDays === 'ALL') return true
@@ -58,7 +57,6 @@ export default function DemandSection({
         onRetry={onRetryFacts}
       />
 
-      {/* 상권 수요 참고값: 3개의 독립된 미니 카드로 분리하여 명확한 구분 제공 */}
       <div className="panel demand-facts-panel">
         <div className="row-between">
           <h3>상권 수요 참고값</h3>
@@ -80,7 +78,6 @@ export default function DemandSection({
         </div>
       </div>
 
-      {/* 3대 차트 대시보드: 화면이 줄어들면 깨지지 않고 자연스럽게 1~2열로 감싸지도록 minmax 설정 */}
       <div className="charts-grid">
         <div className="panel">
           <div className="row-between"><h3>시간대별 매출 지수</h3><RealBadge /></div>

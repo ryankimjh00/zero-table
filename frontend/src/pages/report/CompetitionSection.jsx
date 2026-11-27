@@ -1,3 +1,4 @@
+// 보고서 03 경쟁과 가격: 상권 경쟁 참고값, 대표 메뉴 가격, 판매 방식별 운영 점검.
 import { RealBadge } from '../../components/Badges.jsx'
 import FactsRetryNotice from '../../components/FactsRetryNotice.jsx'
 import { isFactFailed } from '../../api.js'
@@ -13,7 +14,6 @@ const SALES_MODE_CHECKS = {
   배달: '배달 가능 지역의 경쟁 매장과 배달 수요를 살펴보세요. 배달 수수료·포장비와 이동 중 음식의 품질 유지도 함께 확인해 보세요.',
 }
 
-// 03 경쟁과 가격
 export default function CompetitionSection({
   facts,
   onRetryFacts,

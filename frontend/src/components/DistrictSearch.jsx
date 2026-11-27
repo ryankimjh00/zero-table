@@ -1,7 +1,7 @@
+// 동네 검색. 서버의 서울시 상권 목록(실제 데이터)에서 이름·동·구로 찾는다.
 import { useEffect, useState } from 'react'
 import { loadDistricts } from '../api.js'
 
-// 동네 검색. 서버의 서울시 상권 목록(실제 데이터)에서 이름·동·구로 찾는다.
 // 사용자가 "성수"처럼 글자로 쳐도, 고르는 순간 서버가 쓰는 상권 코드가 정해진다.
 export default function DistrictSearch({ selected, onSelect }) {
   const [districts, setDistricts] = useState([])
