@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
+import { DETAIL_MODE, inputPath, SIMPLE_MODE } from '../constants/routes.js'
 
 // 시작 페이지: 간단 분석과 상세 분석 중 하나를 고른다.
 const MODES = [
   {
-    mode: 'simple',
+    mode: SIMPLE_MODE,
     eyebrow: '간단 상권 분석',
     title: '가볍게 아이디어 점검하기',
     description: ['생각한 음식과 동네가 잘 맞을지 궁금한가요?', '기본 정보부터 넣고 상권을 살펴보세요.'],
@@ -14,7 +15,7 @@ const MODES = [
     button: '간단 분석 시작하기',
   },
   {
-    mode: 'detail',
+    mode: DETAIL_MODE,
     eyebrow: '개인 조건별 상세 분석',
     title: '내 조건으로 창업 가능성 살펴보기',
     description: ['구체적으로 창업을 준비하고 있나요?', '고객부터 운영 준비까지, 내 상황에 맞춰 살펴보세요.'],
@@ -50,7 +51,7 @@ export default function StartPage() {
               <strong>{m.noticeTitle}</strong>
               <p>{m.notice}</p>
             </div>
-            <Link className="btn primary block" to={`/input?mode=${m.mode}`}>{m.button} →</Link>
+            <Link className="btn primary block" to={inputPath(m.mode)}>{m.button} →</Link>
           </section>
         ))}
       </div>
