@@ -1,5 +1,8 @@
-// 백엔드(운영 서버)와 주고받는 함수 모음. 화면 파일은 여기 함수만 부른다.
-const BASE_URL = 'https://webframework.monithub.org/api/v1'
+// 백엔드와 주고받는 함수 모음. 화면 파일은 여기 함수만 부른다.
+
+// 서버 주소: frontend/.env에 VITE_API_BASE_URL을 적으면 그 주소(예: 로컬 백엔드), 없으면 운영 서버
+const PRODUCTION_API_BASE_URL = 'https://webframework.monithub.org/api/v1'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || PRODUCTION_API_BASE_URL
 
 // 시안 기준 분기. 사용자에게 묻지 않고 고정한다.
 export const QUARTER = '20262'

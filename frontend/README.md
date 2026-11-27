@@ -16,6 +16,8 @@ npm ci          # 라이브러리 설치. 처음 한 번, 또는 package-lock.js
 npm run dev     # 개발 서버 http://localhost:5173 (저장하면 바로 반영)
 ```
 
+로컬 백엔드로 시험할 때만 `frontend/.env`에 `VITE_API_BASE_URL=http://localhost:8080/api/v1`을 적고 개발 서버를 다시 켭니다. 없으면 운영 서버를 씁니다. `.env`는 커밋하지 않습니다.
+
 ## 2. 이슈 진행 순서
 
 1. **이슈 확인**: 내 담당인지, "기다리는 것"이 끝났는지 본다.
