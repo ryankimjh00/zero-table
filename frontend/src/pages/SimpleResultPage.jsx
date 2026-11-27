@@ -1,3 +1,4 @@
+// 간단 분석 결과: 점수, 수요·경쟁·비용 요약 카드, 상세 분석 안내를 보여 준다.
 import { Link, Navigate } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
 import SummaryBar from '../components/SummaryBar.jsx'
@@ -10,7 +11,6 @@ import { assessmentScore, count, FAILED_TEXT, won } from '../format.js'
 import { TOTAL_QUESTIONS } from '../constants/questions.js'
 import { analyzingPath, inputPath, questionsPath, SIMPLE_MODE } from '../constants/routes.js'
 
-// 간단 분석 결과: 점수, 수요·경쟁·비용 요약 카드, 상세 분석 안내를 보여 준다.
 export default function SimpleResultPage() {
   const { base: currentBase, simpleResult, setSimpleResult } = useAnswers()
   if (!simpleResult) return <Navigate to={inputPath(SIMPLE_MODE)} replace />

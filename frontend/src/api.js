@@ -4,7 +4,7 @@
 const PRODUCTION_API_BASE_URL = 'https://webframework.monithub.org/api/v1'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || PRODUCTION_API_BASE_URL
 
-// 시안 기준 분기. 사용자에게 묻지 않고 고정한다.
+// 분석에 쓰는 자료 분기(2026년 2분기). 사용자에게 묻지 않고 고정한다.
 export const QUARTER = '20262'
 
 const CONNECTION_ERROR = '서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.'
@@ -23,7 +23,7 @@ async function request(path, options) {
   return data
 }
 
-// 저장된 데이터 조회. 결과가 없으면 null을 돌려준다.
+// 조건에 맞는 기록 하나만 받는다. 그 상권·업종 자료가 없으면 null이다.
 async function firstRecord(dataset, params) {
   const query = new URLSearchParams({ size: '1', quarter: QUARTER, ...params })
   const page = await request(`/datasets/${dataset}/records?${query}`)
@@ -129,13 +129,16 @@ export function isFactFailed(facts, sourceName) {
   return facts?.failedSources?.includes(sourceName) ?? false
 }
 
-// 기준 상권 주변의 가까운 비교 상권 목록과 데이터 조회 (반경 2km 내외, 최대 3곳)
+// 01 입지 비교에 보여 줄 주변 상권 수
+const NEARBY_DISTRICT_COUNT = 3
+
+// 기준 상권에서 가장 가까운 상권 3곳과 그 상권 자료
 export async function loadNearbyDistrictsComparison(targetDistrictCode, industryCode) {
   const allDistricts = await loadDistricts()
   const target = allDistricts.find((d) => d.code === targetDistrictCode)
   if (!target || !target.x || !target.y) return []
 
-  // 거리(미터) 계산 후 가까운 순으로 정렬 (기준 상권 본인 제외)
+  // 상권 좌표가 미터 단위라 두 점 사이 직선거리를 그대로 미터로 쓴다
   const nearbyCandidates = allDistricts
     .filter((d) => d.code !== targetDistrictCode && d.x && d.y)
     .map((d) => {
@@ -144,11 +147,8 @@ export async function loadNearbyDistrictsComparison(targetDistrictCode, industry
     })
     .sort((a, b) => a.distance - b.distance)
 
-  // 반경 2000m 이내 우선 선택, 부족하면 가장 가까운 3곳 선택
-  const within2km = nearbyCandidates.filter((d) => d.distance <= 2000)
-  const selected = (within2km.length >= 3 ? within2km : nearbyCandidates).slice(0, 3)
+  const selected = nearbyCandidates.slice(0, NEARBY_DISTRICT_COUNT)
 
-  // 선택된 상권들의 공공데이터 병렬 조회
   const comparisonResults = await Promise.all(
     selected.map(async (district) => {
       const facts = await loadDistrictFacts(district.code, industryCode)

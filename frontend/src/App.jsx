@@ -1,3 +1,4 @@
+// 주소(URL)와 화면을 짝지어 둔 표. 화면 이동은 전부 이 표를 따른다.
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout.jsx'
 import StartPage from './pages/StartPage.jsx'
@@ -13,7 +14,6 @@ import {
   SIMPLE_RESULT_PATH, START_PATH,
 } from './constants/routes.js'
 
-// 주소(URL)와 화면을 짝지어 둔 표. 화면 이동은 전부 이 표를 따른다.
 export default function App() {
   return (
     <Routes>

@@ -1,6 +1,6 @@
+// 분석한 뒤 입력이 바뀌었으면 결과가 지금 입력과 맞지 않으니 다시 분석하라고 알린다.
 import { Link } from 'react-router-dom'
 
-// 분석한 뒤 입력이 바뀌었으면 결과가 지금 입력과 맞지 않으니 다시 분석하라고 알린다.
 export default function OutdatedNotice({ analyzedInput, currentInput, retryTo }) {
   if (JSON.stringify(analyzedInput) === JSON.stringify(currentInput)) return null
 

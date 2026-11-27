@@ -1,3 +1,4 @@
+// 기본 입력: 간단 분석과 상세 분석이 같은 화면을 쓰고 버튼만 다르다.
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAnswers } from '../state/answersContext.js'
@@ -9,7 +10,6 @@ import { DETAIL_STEPS } from '../constants/flow.js'
 import { RealBadge } from '../components/Badges.jsx'
 import { analyzingPath, isDetailMode, questionsPath, SIMPLE_MODE } from '../constants/routes.js'
 
-// 기본 입력: 간단 분석(mode=simple)과 상세 분석(mode=detail)이 같은 화면을 쓰고 버튼만 다르다.
 export default function BasicInputPage() {
   const [params] = useSearchParams()
   const isDetail = isDetailMode(params)

@@ -1,3 +1,4 @@
+// 상세 분석 보고서. 서버 결과를 꺼내 구역마다 필요한 값만 넘긴다.
 import { Link, Navigate } from 'react-router-dom'
 import { useAnswers } from '../../state/answersContext.js'
 import { retryFailedFacts } from '../../api.js'
@@ -13,7 +14,6 @@ import CostSection from './CostSection.jsx'
 import CriteriaSection from './CriteriaSection.jsx'
 import ReportNotice from './ReportNotice.jsx'
 
-// 상세 분석 보고서. 서버 결과를 꺼내 구역마다 필요한 값만 넘긴다.
 export default function ReportPage() {
   const { base: currentBase, answers: currentAnswers, detailResult, setDetailResult, resetAll } = useAnswers()
   if (!detailResult) return <Navigate to={questionsPath(1)} replace />

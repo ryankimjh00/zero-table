@@ -1,12 +1,12 @@
+// 보고서 04 비용과 자본: 입력한 자본과 아직 확인하지 않은 비용을 보여 준다.
 import { won } from '../../format.js'
 
-// 아직 확인하지 않은 비용 목록 (이름 있는 상수로 관리)
+// 후보 점포 견적을 받기 전이라 아직 금액을 모르는 비용
 const PENDING_COST_ITEMS = ['보증금', '권리금', '시설비', '임대료']
 
 const COST_NOTICE =
   '후보 점포 견적을 받기 전이라 자금이 충분한지는 판단하지 않았어요. 견적을 받은 뒤 위 금액과 비교해 보세요.'
 
-// 04 비용과 자본
 export default function CostSection({ startupCapital, monthlyCapital }) {
   const monthlyBudgetLabel = monthlyCapital ? `월 ${won(monthlyCapital)}` : '월 운영 자금'
 

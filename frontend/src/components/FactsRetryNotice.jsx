@@ -1,7 +1,7 @@
+// 이 구역에서 쓰는 상권 자료 중 불러오지 못한 것이 있으면 알리고 다시 불러오게 한다.
 import { useState } from 'react'
 import { FACT_SOURCE_LABELS, isFactFailed } from '../api.js'
 
-// 이 구역에서 쓰는 상권 자료 중 불러오지 못한 것이 있으면 알리고 다시 불러오게 한다.
 // usedSources: 이 구역이 쓰는 자료 이름들, onRetry: 실패한 자료를 다시 받아 결과에 반영하는 함수
 export default function FactsRetryNotice({ facts, usedSources, onRetry }) {
   const [retrying, setRetrying] = useState(false)

@@ -1,3 +1,4 @@
+// 앱 시작점: 화면 전체를 주소 이동과 공용 답변 보관함으로 감싸 그린다.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'

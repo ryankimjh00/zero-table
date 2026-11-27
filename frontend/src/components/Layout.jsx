@@ -1,9 +1,8 @@
+// 모든 화면에 공통으로 들어가는 머리말과 꼬리말. <Outlet /> 자리에 주소에 맞는 화면이 들어간다.
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { ABOUT_PATH, START_PATH } from '../constants/routes.js'
 
-// 모든 화면에 공통으로 들어가는 머리말과 꼬리말.
-// <Outlet />자리에 주소에 맞는 화면이 들어간다.
 export default function Layout() {
   const [loginNotice, setLoginNotice] = useState(false)
 
