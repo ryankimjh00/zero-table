@@ -1,3 +1,4 @@
+// 모든 화면이 같이 쓰는 입력값·분석 결과 보관함. 새로고침해도 남도록 sessionStorage에도 저장한다.
 import { useEffect, useState } from 'react'
 import { AnswersContext } from './answersContext.js'
 import { DEFAULT_ANSWERS, NUMBER_FIELDS } from '../constants/questions.js'
