@@ -1,6 +1,7 @@
+// 진행 단계 표시. 지난 단계는 체크, 지금 단계는 강조한다.
 import { SIMPLE_STEPS } from '../constants/flow.js'
 
-// 화면 아래(또는 위)의 진행 단계 표시. current는 1부터 센다.
+// current는 1부터 센다.
 export default function FlowStepper({ steps = SIMPLE_STEPS, current }) {
   return (
     <ol className="stepper">
